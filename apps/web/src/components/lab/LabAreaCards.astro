@@ -1,0 +1,41 @@
+---
+// §6.5 섹션 2 — IMAGE LAB 3 영역 카드 (v1.3.13)
+// audit §0 결정 #3 — Image Lab 1차 노출은 한 줄 카피 3개로 진행.
+const areas = [
+  {
+    title: "퍼스널컬러",
+    titleEn: "Personal Color",
+    copy: "자연적인 색채조화로 사람에게 어울리는 색을 진단하는 프로그램",
+  },
+  {
+    title: "스타일",
+    titleEn: "Style",
+    copy: "바디 타입 진단을 통해 자신만의 어울리는 소재·실루엣·패턴을 알 수 있는 시스템",
+  },
+  {
+    title: "골격·헤어",
+    titleEn: "Body & Hair",
+    copy: "얼굴형과 골격에 따라 헤어 스타일과 헤어 웨어를 연출하는 프로그램",
+  },
+];
+---
+
+<section class="bg-background">
+  <div class="mx-auto max-w-[var(--container-max)] px-[var(--container-padding)] py-24">
+    <div class="grid grid-cols-1 gap-10 md:grid-cols-3 md:gap-8">
+      {areas.map((a) => (
+        <article class="border-t border-foreground pt-8">
+          <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">
+            {a.titleEn}
+          </p>
+          <h3 class="mt-4 font-serif text-[clamp(28px,3vw,40px)] leading-tight tracking-[-0.01em] text-foreground">
+            {a.title}
+          </h3>
+          <p class="mt-6 text-base leading-[1.7] text-soft">
+            {a.copy}
+          </p>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>

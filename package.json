@@ -1,0 +1,15 @@
+{
+  "name": "cmk-image-korea",
+  "private": true,
+  "version": "0.0.0",
+  "description": "CMK Image Korea — corporate website monorepo (Astro + Sanity + Cloudflare Worker)",
+  "scripts": {
+    "dev": "pnpm --filter web dev",
+    "build": "pnpm --filter web build",
+    "preview": "pnpm --filter web preview"
+  },
+  "packageManager": "pnpm@11.1.3",
+  "engines": {
+    "node": ">=20"
+  }
+}

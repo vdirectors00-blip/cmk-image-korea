@@ -1,0 +1,18 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import AboutPageHead from "@/components/about/AboutPageHead.astro";
+import PeopleGrid from "@/components/about/PeopleGrid.astro";
+import ScrollToTop from "@/components/common/ScrollToTop.astro";
+
+import { sanityClient } from "@/lib/sanity";
+import { peopleQuery } from "@/lib/queries";
+import type { Person } from "@/types/sanity";
+
+const people = await sanityClient.fetch<Person[]>(peopleQuery);
+---
+
+<BaseLayout title="People — About CMK Image Korea">
+  <AboutPageHead active="people" />
+  <PeopleGrid people={people} />
+  <ScrollToTop />
+</BaseLayout>

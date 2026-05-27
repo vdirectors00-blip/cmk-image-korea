@@ -1,0 +1,26 @@
+---
+// Community 전용 PageHead — post 카테고리 필터 (v1.3.15)
+// 사용자 결정 — 5 카테고리 → 2 카테고리 (강의·미디어 / 뉴스) 단순화.
+import PageHead from "@/components/common/PageHead.astro";
+import type { PostCategory } from "@/types/sanity";
+
+interface Props {
+  active?: PostCategory | "all";
+}
+
+const { active = "all" } = Astro.props;
+
+const CATEGORIES: Array<{ slug: PostCategory | "all"; label: string; href: string }> = [
+  { slug: "all", label: "All", href: "/community" },
+  { slug: "강의·미디어", label: "Media", href: "/community/media" },
+  { slug: "뉴스", label: "News", href: "/community/news" },
+];
+
+const navItems = CATEGORIES.map((c) => ({
+  label: c.label,
+  href: c.href,
+  active: c.slug === active,
+}));
+---
+
+<PageHead title="Community" navItems={navItems} />

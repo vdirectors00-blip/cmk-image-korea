@@ -1,0 +1,105 @@
+---
+// §6.2 섹션 5 — PEOPLE 그리드 (v1.3.15)
+// 3 축 분기 (Appearance · Behavior · Communication). 사진 작게 (aspect-square + dense grid).
+// 이름 carbon 노출. 데이터 0건이면 placeholder 12 카드.
+import { urlFor } from "@/lib/image";
+import { pickLocale } from "@/types/sanity";
+import type { Person, PersonAxis } from "@/types/sanity";
+
+interface Props {
+  people: Person[];
+}
+
+const { people } = Astro.props;
+
+const GROUPS: Array<{ label: string; korean: string; axis: PersonAxis }> = [
+  { label: "Appearance", korean: "외모 · 호감", axis: "appearance" },
+  { label: "Behavior", korean: "행동 · 기억", axis: "behavior" },
+  { label: "Communication", korean: "커뮤니케이션 · 감동", axis: "communication" },
+];
+
+const grouped = GROUPS.map((g) => ({
+  ...g,
+  people: people.filter((p) => p.axes?.includes(g.axis)),
+}));
+
+const hasAny = grouped.some((g) => g.people.length > 0);
+const placeholderCount = 12;
+---
+
+<section class="bg-background">
+  <div class="mx-auto max-w-[var(--container-max)] px-[var(--container-padding)] py-32">
+    <div class="md:flex md:items-end md:justify-between">
+      <div>
+        <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">
+          People
+        </p>
+        <h2 class="mt-4 font-serif text-[clamp(40px,5vw,72px)] leading-[1.1] tracking-[-0.02em] text-foreground">
+          함께하는 사람들.
+        </h2>
+      </div>
+      <p class="mt-4 max-w-md text-sm text-muted md:mt-0">
+        3 축 (Appearance · Behavior · Communication) 별 전문 강사진
+      </p>
+    </div>
+
+    {hasAny ? (
+      <div class="mt-16 space-y-16">
+        {grouped.map((group) => group.people.length > 0 && (
+          <div>
+            <div class="border-t border-foreground pt-6">
+              <h3 class="font-serif italic text-[clamp(28px,3.5vw,40px)] leading-tight tracking-[-0.01em] text-foreground">
+                {group.label}
+              </h3>
+            </div>
+            <div class="mt-6 grid grid-cols-4 gap-3 md:grid-cols-6 md:gap-4 lg:grid-cols-8 lg:gap-4">
+              {group.people.map((p) => {
+                const imgSrc = p.image
+                  ? urlFor(p.image).width(240).height(240).fit("crop").url()
+                  : p.imagePath;
+                return (
+                  <a href={`/about/people/${p._id}`} class="group block">
+                    <div class="aspect-square overflow-hidden bg-cream">
+                      {imgSrc ? (
+                        <img
+                          src={imgSrc}
+                          alt={pickLocale(p.name)}
+                          class="h-full w-full object-cover transition-transform duration-500 ease-[var(--ease-out-soft)] group-hover:scale-[1.05]"
+                          style="object-position: 50% 25%;"
+                          loading="lazy"
+                        />
+                      ) : (
+                        <div class="flex h-full w-full items-end justify-end p-1.5 text-[9px] uppercase tracking-[0.18em] text-faint">
+                          Photo
+                        </div>
+                      )}
+                    </div>
+                    <p class="mt-2 text-center text-[12px] leading-tight text-foreground group-hover:text-accent">
+                      {pickLocale(p.name)}
+                    </p>
+                  </a>
+                );
+              })}
+            </div>
+          </div>
+        ))}
+      </div>
+    ) : (
+      <div class="mt-16 grid grid-cols-4 gap-3 md:grid-cols-6 md:gap-4 lg:grid-cols-8 lg:gap-4">
+        {Array.from({ length: placeholderCount }).map((_, i) => (
+          <div class="group">
+            <div class="aspect-square overflow-hidden bg-cream">
+              <div class="flex h-full w-full items-end justify-end p-1.5 text-[9px] uppercase tracking-[0.18em] text-faint">
+                {String(i + 1).padStart(2, "0")}
+              </div>
+            </div>
+            <p class="mt-2 text-center text-[12px] leading-tight text-faint">—</p>
+          </div>
+        ))}
+        <p class="col-span-full mt-6 text-center text-[10px] uppercase tracking-[0.18em] text-faint">
+          [ 강사진 자료 입수 대기 ]
+        </p>
+      </div>
+    )}
+  </div>
+</section>

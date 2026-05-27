@@ -1,0 +1,65 @@
+---
+// /community/page/[page] — 2번 페이지 이상 (v1.3.15)
+// 사용자 결정 A — 정식 페이지네이션. page 1 은 /community.
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import CommunityPageHead from "@/components/community/CommunityPageHead.astro";
+import PostCard from "@/components/community/PostCard.astro";
+import Pagination from "@/components/community/Pagination.astro";
+import ScrollToTop from "@/components/common/ScrollToTop.astro";
+
+import { sanityClient } from "@/lib/sanity";
+import { postsAllQuery } from "@/lib/queries";
+import type { Post } from "@/types/sanity";
+
+export async function getStaticPaths() {
+  const PAGE_SIZE = 12;
+  const allPosts = await sanityClient.fetch<Post[]>(postsAllQuery);
+  const totalPages = Math.max(1, Math.ceil(allPosts.length / PAGE_SIZE));
+  const paths = [];
+  for (let i = 2; i <= totalPages; i++) {
+    paths.push({
+      params: { page: String(i) },
+      props: {
+        posts: allPosts.slice((i - 1) * PAGE_SIZE, i * PAGE_SIZE),
+        currentPage: i,
+        totalPages,
+      },
+    });
+  }
+  return paths;
+}
+
+const { posts, currentPage, totalPages } = Astro.props as {
+  posts: Post[];
+  currentPage: number;
+  totalPages: number;
+};
+
+const pageHref = (n: number) => (n === 1 ? "/community" : `/community/page/${n}`);
+const prevHref = pageHref(currentPage - 1);
+const nextHref = currentPage < totalPages ? pageHref(currentPage + 1) : undefined;
+---
+
+<BaseLayout
+  title={`Community · Page ${currentPage} — CMK Image Korea`}
+  description="CMK NEWS · 강의·미디어 노출 · 인터뷰·방송·기고"
+>
+  <CommunityPageHead />
+
+  <section class="bg-background">
+    <div class="mx-auto max-w-[var(--container-max)] px-[var(--container-padding)] py-24">
+      <div class="grid grid-cols-1 items-start gap-12 md:grid-cols-2 md:gap-x-10 md:gap-y-20 lg:grid-cols-3">
+        {posts.map((post) => <PostCard post={post} />)}
+      </div>
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        prevHref={prevHref}
+        nextHref={nextHref}
+        pageHref={pageHref}
+      />
+    </div>
+  </section>
+
+  <ScrollToTop />
+</BaseLayout>

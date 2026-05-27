@@ -1,0 +1,29 @@
+---
+// Consulting 전용 PageHead — 카테고리 4개 메뉴 고정 (영문 라벨)
+import PageHead from "@/components/common/PageHead.astro";
+import type { ServiceCategory } from "@/types/sanity";
+
+interface Props {
+  active?: ServiceCategory;
+}
+
+const { active } = Astro.props;
+
+const CATEGORIES: Array<{ slug: ServiceCategory; label: string }> = [
+  { slug: "corporate", label: "Corporate" },
+  { slug: "executive", label: "Executive PI" },
+  { slug: "public", label: "Public" },
+  { slug: "media", label: "Media" },
+  { slug: "personal", label: "Personal" },
+];
+
+// v1.3.15 — 카테고리당 service 1개라 sub-nav 가 직접 /consulting/[slug] 페이지로 이동.
+// /consulting 자체는 corporate 로 redirect (index.astro).
+const navItems = CATEGORIES.map((c) => ({
+  label: c.label,
+  href: `/consulting/${c.slug}`,
+  active: c.slug === active,
+}));
+---
+
+<PageHead title="Consulting" navItems={navItems} />

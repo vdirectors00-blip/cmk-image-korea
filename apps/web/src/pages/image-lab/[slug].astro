@@ -1,0 +1,88 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import PortableText from "@/components/common/PortableText.astro";
+import ScrollToTop from "@/components/common/ScrollToTop.astro";
+import { urlFor } from "@/lib/image";
+import { sanityClient } from "@/lib/sanity";
+import {
+  labArticleBySlugQuery,
+  labArticlesAllQuery,
+} from "@/lib/queries";
+import { pickLocale } from "@/types/sanity";
+import type { LabArticle, Person } from "@/types/sanity";
+
+export async function getStaticPaths() {
+  const articles = await sanityClient.fetch<LabArticle[]>(labArticlesAllQuery);
+  return articles.map((a) => ({ params: { slug: a.slug.current } }));
+}
+
+const { slug } = Astro.params;
+const article = await sanityClient.fetch<LabArticle | null>(
+  labArticleBySlugQuery,
+  { slug }
+);
+
+if (!article) {
+  return Astro.redirect("/image-lab");
+}
+
+const author = (article.author && "_id" in article.author
+  ? article.author
+  : null) as Person | null;
+
+const formatDate = (iso?: string) =>
+  iso
+    ? new Date(iso).toLocaleDateString("ko-KR", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      })
+    : "";
+---
+
+<BaseLayout title={`${pickLocale(article.title)} — Image Lab`}>
+  <article class="bg-background">
+    {article.coverImage && (
+      <div class="aspect-[16/9] overflow-hidden md:aspect-[21/9]">
+        <img
+          src={urlFor(article.coverImage).width(2000).height(1000).fit("crop").url()}
+          alt={pickLocale(article.title)}
+          class="h-full w-full object-cover"
+        />
+      </div>
+    )}
+
+    <header class="mx-auto max-w-[760px] px-[var(--container-padding)] py-20 text-center">
+      {article.field && (
+        <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">
+          {article.field}
+        </p>
+      )}
+      <h1
+        class="mt-6 font-serif leading-[1.05] tracking-[-0.02em] text-foreground"
+        style="font-size: clamp(36px, 5.5vw, 72px);"
+      >
+        {pickLocale(article.title)}
+      </h1>
+      {(author?.name || article.publishedAt) && (
+        <p class="mt-8 text-sm text-muted">
+          {author?.name && <>By {pickLocale(author.name)}</>}
+          {author?.name && article.publishedAt && <> · </>}
+          {formatDate(article.publishedAt)}
+        </p>
+      )}
+    </header>
+
+    {article.body?.ko && article.body.ko.length > 0 ? (
+      <div class="mx-auto max-w-[760px] px-[var(--container-padding)] pb-32 text-base leading-[1.85] text-soft">
+        <PortableText blocks={article.body.ko} />
+      </div>
+    ) : (
+      <div class="mx-auto max-w-[760px] px-[var(--container-padding)] pb-32 text-center">
+        <p class="text-sm text-faint">[ 본문 미등록 · Sanity Studio 에서 추가하세요 ]</p>
+      </div>
+    )}
+  </article>
+
+  <ScrollToTop />
+</BaseLayout>

@@ -1,0 +1,157 @@
+$(document).ready(function(){
+	scroll_top('.scroll_top');
+	sNavAc();
+	if(a_num==0&&b_num==2) {goToFromHash('.s_tab1','.s_tab_con');}
+	if(a_num==0&&b_num==4) {goToFromHash('.s15_tab1','.s_tab_con');}
+	if(a_num==2||a_num==3||a_num==5||a_num==6) {goToFromHash('.s_tab2','.s_tab_con');}
+	img_pop01();
+});
+$(window).on('hashchange', function () {
+	if(a_num==0&&b_num==2) {goToFromHash('.s_tab1','.s_tab_con');}
+	if(a_num==0&&b_num==4) {goToFromHash('.s15_tab1','.s_tab_con');}
+	if(a_num==2||a_num==3||a_num==5||a_num==6) {goToFromHash('.s_tab2','.s_tab_con');}
+});
+
+
+function goToFromHash(tab,target) {
+	// 해쉬태그에서 맨 앞의 #을 제거한다.
+	var hashtag = location.hash.substring(1, location.hash.length);
+	var tabN = hashtag.split('_');
+	var tabN = tabN[2]-1;
+	var tabTxt1 = $(tab).find('li').eq(0).find('a').attr('href');
+	var tabTxt1 = tabTxt1.split('#');
+	var tabTxt1 = tabTxt1[1];
+	//alert(hashtag);
+	if(!hashtag){
+		$(tab).find('li').eq(0).addClass('on');
+		$(target).load(tabTxt1+'.php');
+	}else{
+		$(tab).find('li').eq(tabN).addClass('on');
+		$(target).load(hashtag+'.php');
+	}
+	$(tab).find('li').on('click',function (){
+		var $t = $(this);
+		$t.addClass('on').siblings().removeClass('on');
+	});
+}
+function scroll_top(t){
+	var $target = $(t);
+	$target.on('click',function (){
+		$('body,html').animate({scrollTop:0},200 );
+	});
+	$(window).scroll(function (){
+		if ($(this).scrollTop() > 10) { 
+			$target.fadeIn();
+		} else {
+			$target.fadeOut();
+		}
+	});
+}
+
+
+function img_pop01(){
+	$(document).on('click','.s15_list1 > li .box1 > a',function(){
+		var $t = $(this);
+		var num = $t.parent().parent().index();
+		var totalNum = $('.s15_list1 > li').length;
+		var $simg = $t.find('.pic');
+		var src = $simg.attr('src').replace("_s","_b");
+		var alt = $simg.attr('alt');
+		var $tar = $t.parent().next('.box2');
+		var img = '<img src="'+src+'" alt="'+alt+'" />';
+		var list = $tar.find('.list').html();
+
+		var txt = '<div class="img_pop01">';
+			txt += '		<div class="list_box">';
+			txt +=			img;
+			txt += '			<div class="list">';
+			txt += '				<a href="javascript:;" class="close"><img src="/images/s1/pop_close.gif" alt="팝업닫기" /></a>';
+			txt += '				<div class="txt_list">';
+			txt += '					<p class="name">'+alt+'</p>';
+			txt +=					list;
+			txt += '				</div>';
+			txt += '			</div>';
+			txt += '		</div>';
+			txt += '		<a href="javascript:;" class="arr pre"><img src="/images/s1/s15_arr1.png" alt="이전" /></a>';
+			txt += '		<a href="javascript:;" class="arr next"><img src="/images/s1/s15_arr2.png" alt="다음" /></a>';
+			txt += '</div>';
+
+		$('html').addClass('active');
+		$('#wrap').append(txt);
+		$('.img_pop01').fadeIn();
+
+		$('.img_pop01, .img_pop01 .close').on('click',function (){
+			$('html').removeClass('active');
+			$('.img_pop01').fadeOut(300); 
+			setTimeout(function (){$('.img_pop01').remove();},400);
+		});
+
+		$('.img_pop01 .list_box').on('click',function (e){
+			e.stopPropagation();
+		});
+
+		$('.img_pop01 .pre').on('click',function (e){
+			e.stopPropagation();
+			num--;
+			if(num < 0){num=totalNum-1;}
+			arrAct(num);
+		});
+
+		$('.img_pop01 .next').on('click',function (e){
+			e.stopPropagation();
+			num++;
+			if(num >= totalNum){num=0;}
+			arrAct(num);
+		});
+		function arrAct(n){
+			var $pTar = $('.s15_list1 > li').eq(n);
+			var $pImg = $pTar.find('.pic');
+			var $pSrc = $pImg.attr('src').replace("_s","_b");
+			var $pAlt = $pImg.attr('alt');
+			var $pTxt = $pTar.find('.box2 .list').html();
+			$('.img_pop01 .list_box > img').attr({'src':$pSrc,'alt':$pAlt});
+			$('.img_pop01 .list_box > .list .txt_list').html('<p class="name">'+$pAlt+'</p>'+$pTxt);
+		}
+	});
+}
+
+
+
+/*
+$(document).ready(function(){
+	if(a_num==0&&b_num==2) {stabAC1('.s_tab1','.s_tab_con','s_3_',0);}
+});
+
+
+function stabAC1(tab,target,p,n){
+	$(tab).find('li').eq(n).addClass('on');
+	$(target).load(p+(n+1)+".php");
+	$(tab).find('li').on('click',function (){
+		var $t = $(this);
+		var tn = $t.index()+1;
+		var tp = p+tn+'.php';
+		$t.addClass('on').siblings().removeClass('on');
+		$(target).load(tp);
+	});
+
+}
+*/
+
+function sNavAc(){
+	$('.m_s_nav > div:eq(0) > ul li').eq(a_num).addClass('on');
+	$('.m_s_nav > div:eq(1) > ul li').eq(b_num).addClass('on');
+	$('.m_s_nav > div > a').on('click',function (e){
+		e.stopPropagation();
+		var t = $(this);
+		if (t.next('ul').is(':hidden')) {
+			t.next('ul').slideDown().parent().siblings().find('ul').slideUp();
+		} else {
+			t.next('ul').slideUp();
+		}
+	});
+	$(document).on('click',function(e) {
+		if ($(e.target).parents('.m_s_nav').length == 0) {
+			$('.m_s_nav > div > a').next('ul').slideUp();
+		}
+	});
+}

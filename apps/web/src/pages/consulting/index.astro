@@ -1,0 +1,52 @@
+---
+// /consulting — 인덱스 (PageHead + service 카드 그리드, v1.3.15)
+// 사용자 결정 — 인덱스 유지 + sub-nav 직접 페이지 이동 (FilterScript 폐기, 단순 grid).
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import ConsultingPageHead from "@/components/consulting/ConsultingPageHead.astro";
+import CategoryCard from "@/components/common/CategoryCard.astro";
+import ScrollToTop from "@/components/common/ScrollToTop.astro";
+
+import { sanityClient } from "@/lib/sanity";
+import { servicesAllQuery } from "@/lib/queries";
+import { SERVICE_HERO_FALLBACK } from "@/lib/service-hero-fallback";
+import { pickLocale } from "@/types/sanity";
+import type { Service } from "@/types/sanity";
+
+const services = await sanityClient.fetch<Service[]>(servicesAllQuery);
+---
+
+<BaseLayout
+  title="Consulting — CMK Image Korea"
+  description="기업 출강 · 임원 PI · 기관·공공 · 미디어 트레이닝 — 임직원 단위 컨설팅이 본진."
+>
+  <ConsultingPageHead />
+
+  <section class="bg-background">
+    <div class="mx-auto max-w-[var(--container-max)] px-[var(--container-padding)] py-24">
+      {services.length === 0 ? (
+        <p class="py-32 text-center text-sm text-faint">
+          [ 컨설팅 영역 데이터가 없습니다 · Sanity Studio 에서 추가 ]
+        </p>
+      ) : (
+        <div class="grid grid-cols-1 gap-12 md:grid-cols-2 md:gap-x-10 md:gap-y-20">
+          {services.map((service) => (
+            <CategoryCard
+              href={`/consulting/${service.slug.current}`}
+              eyebrow={service.category === "corporate" ? "Corporate"
+                : service.category === "executive" ? "Executive PI"
+                : service.category === "public" ? "Public"
+                : service.category === "media" ? "Media"
+                : "Personal"}
+              title={pickLocale(service.title)}
+              description={pickLocale(service.summary)}
+              image={service.heroImage}
+              fallbackSrc={SERVICE_HERO_FALLBACK[service.category]}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  </section>
+
+  <ScrollToTop />
+</BaseLayout>

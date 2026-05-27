@@ -1,0 +1,125 @@
+---
+// /color-quiz/result/[type] — 5개 시즌 결과 페이지 (v1.3.15)
+// Hero = max-w-container 안에서 50/50 grid (이전 구도 복원, 좌우 narrow 폐기).
+// Next step = 단일 섹션 — 카피 두 단락 + 두 버튼 동일 크기 (grid-cols-2).
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import ScrollToTop from "@/components/common/ScrollToTop.astro";
+import { seasons } from "@/lib/color-quiz";
+import type { SeasonType } from "@/lib/color-quiz";
+
+export async function getStaticPaths() {
+  return (Object.keys(seasons) as SeasonType[]).map((type) => ({
+    params: { type },
+    props: { meta: seasons[type] },
+  }));
+}
+
+const { meta } = Astro.props;
+
+// 시즌 팔레트 → 6 색 linear-gradient. 시즌 정체성 placeholder.
+const gradient = `linear-gradient(135deg, ${meta.palette.map((c) => c.hex).join(", ")})`;
+---
+
+<BaseLayout
+  title={`${meta.english} — Color Quiz · CMK Image Korea`}
+  description={meta.poetic}
+>
+  {/* §8.4.1 Hero — max-w 컨테이너 안 50/50 grid (좌측 빈공간 확보, v1.3.15) */}
+  <section class="bg-background">
+    <div class="mx-auto max-w-[var(--container-max)] px-[var(--container-padding)]">
+      <div class="grid min-h-[60svh] grid-cols-1 md:grid-cols-2">
+        {/* 좌 — 시즌 팔레트 그라데이션 + fade 영문 placeholder */}
+        <div
+          class="relative flex items-end justify-end overflow-hidden p-6"
+          style={`background: ${gradient};`}
+        >
+          <p
+            class="font-serif italic leading-[0.85] text-white/35"
+            style="font-size: clamp(60px, 9vw, 140px);"
+          >
+            {meta.english.split(" ")[0]}
+          </p>
+          <p class="absolute top-4 right-4 text-[10px] uppercase tracking-[0.2em] text-white/70">
+            Photo: Coming Soon
+          </p>
+        </div>
+
+        {/* 우 — 결과 카피 */}
+        <div class="flex flex-col justify-center px-[var(--container-padding)] py-16">
+          <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">
+            Your color
+          </p>
+          <h1
+            class="mt-4 font-serif italic leading-[1.0] tracking-[-0.02em] text-foreground"
+            style="font-size: clamp(48px, 7vw, 112px);"
+          >
+            {meta.english}
+          </h1>
+          <p class="mt-4 text-2xl text-soft">{meta.korean}</p>
+          <p class="mt-8 max-w-md font-serif italic text-xl text-muted">
+            {meta.poetic}
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* §8.4.2 어울리는 팔레트 */}
+  <section class="bg-background">
+    <div class="mx-auto max-w-[var(--container-max)] px-[var(--container-padding)] py-24">
+      <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">
+        Palette
+      </p>
+      <h2 class="mt-4 font-serif italic text-3xl text-foreground">
+        이런 컬러가 당신을 빛나게 합니다.
+      </h2>
+
+      <div class="mt-12 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
+        {meta.palette.map((c) => (
+          <div>
+            <div class="aspect-square w-full" style={`background-color: ${c.hex}`}></div>
+            <p class="mt-3 text-sm font-medium text-foreground">{c.name}</p>
+            <p class="text-xs text-muted">{c.hex}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  {/* §8.4 Next step — 카피 두 단락 + 두 버튼 동일 크기 (v1.3.15) */}
+  <section class="bg-background">
+    <div class="mx-[var(--divider-inset)] border-t border-foreground"></div>
+    <div class="mx-auto max-w-[var(--container-max-wide)] px-[var(--container-padding)] py-24 text-center">
+      <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">
+        Next step
+      </p>
+      <h2 class="mt-4 font-serif text-[clamp(32px,4vw,56px)] leading-[1.1] tracking-[-0.02em] text-foreground">
+        결과는 시작입니다.
+      </h2>
+
+      <p class="mx-auto mt-6 max-w-xl text-base leading-[1.75] text-soft">
+        전문가 1:1 진단으로 본인의 결을 정밀하게,
+      </p>
+      <p class="mx-auto mt-2 max-w-xl text-base leading-[1.75] text-soft">
+        임직원 단체 진단으로 회사의 인상을 새로 짓습니다.
+      </p>
+
+      <div class="mx-auto mt-12 grid max-w-xl grid-cols-1 gap-3 sm:grid-cols-2">
+        <a
+          href={`/contact?form=personal&source=color-quiz-${meta.type}`}
+          class="block w-full border border-foreground px-8 py-4 text-sm uppercase tracking-[0.18em] text-foreground transition-[transform,background-color,color] duration-200 ease-[var(--ease-out-soft)] hover:-translate-y-[2px] hover:bg-foreground hover:text-on-dark"
+        >
+          1:1 진단 신청
+        </a>
+        <a
+          href="/contact?form=corporate&source=color-quiz"
+          class="block w-full border border-foreground px-8 py-4 text-sm uppercase tracking-[0.18em] text-foreground transition-[transform,background-color,color] duration-200 ease-[var(--ease-out-soft)] hover:-translate-y-[2px] hover:bg-foreground hover:text-on-dark"
+        >
+          임직원 진단 문의
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <ScrollToTop />
+</BaseLayout>

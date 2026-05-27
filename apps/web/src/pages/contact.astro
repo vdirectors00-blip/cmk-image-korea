@@ -1,0 +1,137 @@
+---
+// /contact — 3 폼 탭을 클라이언트 필터로 분기 (§6.10 패턴)
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import ContactPageHead from "@/components/common/ContactPageHead.astro";
+import FilterScript from "@/components/common/FilterScript.astro";
+import ScrollToTop from "@/components/common/ScrollToTop.astro";
+import InquiryForm from "@/components/forms/InquiryForm";
+
+import { sanityClient } from "@/lib/sanity";
+import { siteSettingsQuery } from "@/lib/queries";
+import { pickLocale } from "@/types/sanity";
+import type { SiteSettings } from "@/types/sanity";
+
+const site = await sanityClient.fetch<SiteSettings | null>(siteSettingsQuery);
+
+const WORKER_URL = import.meta.env.PUBLIC_WORKER_URL || "";
+const TURNSTILE_SITE_KEY = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || "";
+
+const FORMS = [
+  {
+    slug: "personal" as const,
+    eyebrow: "Personal Consulting",
+    title: "당신의 결을 시작합니다.",
+  },
+  {
+    slug: "corporate" as const,
+    eyebrow: "Corporate Inquiry",
+    title: "임직원의 인상이, 회사의 결정입니다.",
+  },
+  {
+    slug: "academy" as const,
+    eyebrow: "Academy Enrollment",
+    title: "수강 문의.",
+  },
+];
+
+const envReady = WORKER_URL && TURNSTILE_SITE_KEY;
+---
+
+<BaseLayout
+  title="Contact — CMK Image Korea"
+  description="개인 컨설팅 · 기업 출강 · Academy 수강 문의"
+>
+  {/* Turnstile script — Contact 페이지에만 로드 */}
+  <script
+    is:inline
+    src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+    async
+    defer
+    slot="head"
+  />
+
+  <ContactPageHead />
+
+  <section class="bg-background">
+    <div class="mx-auto max-w-[var(--container-max)] px-[var(--container-padding)] py-24">
+
+      {!envReady && (
+        <div class="mx-auto mb-12 max-w-2xl border border-accent bg-cream p-6 text-sm text-soft">
+          <p class="font-semibold text-accent">⚠️ 폼이 비활성 상태입니다</p>
+          <p class="mt-2">
+            <code class="text-xs">PUBLIC_WORKER_URL</code> 또는
+            <code class="text-xs">PUBLIC_TURNSTILE_SITE_KEY</code> 환경변수가 비어 있습니다.
+            Phase 4.5 사용자 액션 가이드를 확인하세요.
+          </p>
+        </div>
+      )}
+
+      <div data-filter-root>
+        {FORMS.map((f) => (
+          <div
+            data-card
+            data-form={f.slug}
+            class:list={["mx-auto max-w-4xl", f.slug !== "corporate" && "hidden"]}
+          >
+            <div class="mb-8 text-center">
+              <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">
+                {f.eyebrow}
+              </p>
+              <h2 class="mt-4 font-serif italic text-3xl text-foreground">{f.title}</h2>
+            </div>
+
+            <InquiryForm
+              kind={f.slug}
+              workerUrl={WORKER_URL}
+              turnstileSiteKey={TURNSTILE_SITE_KEY}
+              client:visible
+            />
+          </div>
+        ))}
+      </div>
+
+      {/* 회사 정보 */}
+      <div class="mx-auto mt-24 grid max-w-3xl grid-cols-1 gap-8 border-t border-foreground pt-12 md:grid-cols-2">
+        <div>
+          <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">
+            Office
+          </p>
+          <p class="mt-3 text-sm text-soft">
+            {pickLocale(site?.companyName) || "CMK 이미지 코리아"}
+          </p>
+          {site?.address && (
+            <p class="mt-1 text-sm text-muted">{pickLocale(site.address)}</p>
+          )}
+          {site?.phone && <p class="mt-1 text-sm text-muted">{site.phone}</p>}
+          {site?.email && (
+            <a
+              href={`mailto:${site.email}`}
+              class="mt-1 block text-sm text-muted underline-offset-4 hover:text-accent hover:underline"
+            >
+              {site.email}
+            </a>
+          )}
+        </div>
+
+        <div>
+          <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">
+            Follow
+          </p>
+          <ul class="mt-3 space-y-1 text-sm">
+            {site?.instagram && <li><a href={site.instagram} class="text-muted hover:text-accent">Instagram →</a></li>}
+            {site?.youtube && <li><a href={site.youtube} class="text-muted hover:text-accent">YouTube →</a></li>}
+            {site?.facebook && <li><a href={site.facebook} class="text-muted hover:text-accent">Facebook →</a></li>}
+            {site?.naverBlog && <li><a href={site.naverBlog} class="text-muted hover:text-accent">Naver Blog →</a></li>}
+            {site?.kakaoChannel && <li><a href={site.kakaoChannel} class="text-muted hover:text-accent">Kakao →</a></li>}
+            {!site?.instagram && !site?.youtube && !site?.facebook && !site?.naverBlog && !site?.kakaoChannel && (
+              <li class="text-faint text-xs">[ SNS 링크 입력 시 자동 노출 ]</li>
+            )}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <FilterScript filterKey="form" defaultValue="corporate" />
+  <ScrollToTop />
+</BaseLayout>

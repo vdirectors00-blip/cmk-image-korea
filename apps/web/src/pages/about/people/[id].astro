@@ -1,0 +1,128 @@
+---
+// /about/people/[id] — 강사진 개별 페이지 (v1.3.16)
+// PeopleGrid 카드 클릭 시 진입. 사진 + 약력 + credentials.
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import AboutPageHead from "@/components/about/AboutPageHead.astro";
+import PortableText from "@/components/common/PortableText.astro";
+import ScrollToTop from "@/components/common/ScrollToTop.astro";
+import { urlFor } from "@/lib/image";
+import { sanityClient } from "@/lib/sanity";
+import { personByIdQuery, personIdsQuery } from "@/lib/queries";
+import { pickLocale } from "@/types/sanity";
+import type { Person } from "@/types/sanity";
+
+export async function getStaticPaths() {
+  const ids = await sanityClient.fetch<string[]>(personIdsQuery);
+  return ids.map((id) => ({ params: { id } }));
+}
+
+const { id } = Astro.params;
+const person = await sanityClient.fetch<Person | null>(personByIdQuery, { id });
+
+if (!person) {
+  return Astro.redirect("/about/people");
+}
+
+const imgSrc = person.image
+  ? urlFor(person.image).width(800).height(1000).fit("crop").url()
+  : person.imagePath;
+
+const axisLabel = person.axes?.[0]
+  ? person.axes[0] === "appearance" ? "Appearance"
+    : person.axes[0] === "behavior" ? "Behavior"
+    : "Communication"
+  : "";
+---
+
+<BaseLayout
+  title={`${pickLocale(person.name)} — People · CMK Image Korea`}
+  description={pickLocale(person.title)}
+>
+  <AboutPageHead active="people" />
+
+  <article class="bg-background">
+    <div class="mx-auto max-w-[var(--container-max)] px-[var(--container-padding)] py-24">
+      <div class="grid grid-cols-1 gap-12 md:grid-cols-12 md:gap-16">
+
+        {/* 좌 — 사진 5 col */}
+        <div class="md:col-span-5">
+          <div class="aspect-[4/5] overflow-hidden bg-cream">
+            {imgSrc ? (
+              <img
+                src={imgSrc}
+                alt={pickLocale(person.name)}
+                class="h-full w-full object-cover"
+                style="object-position: 50% 25%;"
+                loading="eager"
+              />
+            ) : (
+              <div class="flex h-full w-full items-end justify-end p-4 text-[10px] uppercase tracking-[0.2em] text-faint">
+                Photo: Coming Soon
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* 우 — 이름·축·약력 7 col */}
+        <div class="md:col-span-7">
+          {axisLabel && (
+            <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">
+              {axisLabel}
+            </p>
+          )}
+          <h2 class="mt-4 font-serif text-[clamp(40px,5vw,72px)] leading-[1.1] tracking-[-0.02em] text-foreground">
+            {pickLocale(person.name)}
+          </h2>
+          {person.nameEn && (
+            <p class="mt-2 font-serif italic text-2xl text-muted">
+              {person.nameEn}
+            </p>
+          )}
+          {person.title && (
+            <p class="mt-3 text-base text-soft">
+              {pickLocale(person.title)}
+            </p>
+          )}
+
+          {/* 약력 본문 — PortableText */}
+          {person.bio?.ko && person.bio.ko.length > 0 && (
+            <div class="mt-12 space-y-4 break-keep [&_h2]:mt-12 [&_h2]:font-serif [&_h2]:text-2xl [&_h3]:mt-6 [&_h3]:font-serif [&_h3]:text-lg [&_p]:text-base [&_p]:leading-[1.85] [&_p]:text-soft">
+              <PortableText blocks={person.bio.ko} />
+            </div>
+          )}
+
+          {/* 주요 경력·자격 */}
+          {person.credentials && person.credentials.length > 0 && (
+            <div class="mt-12 border-t border-line pt-8">
+              <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">
+                주요 경력·자격
+              </p>
+              <ul class="mt-4 space-y-2">
+                {person.credentials.map((c) => (
+                  <li class="text-base leading-[1.7] text-soft break-keep">
+                    {pickLocale(c)}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {(!person.bio?.ko || person.bio.ko.length === 0) && (!person.credentials || person.credentials.length === 0) && (
+            <p class="mt-12 text-sm text-muted italic">
+              약력 자료 입수 후 업데이트됩니다.
+            </p>
+          )}
+
+          <div class="mt-16 border-t border-foreground pt-6">
+            <a href="/about/people" class="text-sm text-muted hover:text-foreground">
+              ← People 목록으로
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </article>
+
+  <ScrollToTop />
+</BaseLayout>

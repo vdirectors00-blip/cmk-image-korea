@@ -1,0 +1,35 @@
+---
+// Per §7.5 — variants: primary / secondary / ghost
+interface Props {
+  href?: string;
+  variant?: "primary" | "secondary" | "ghost";
+  type?: "button" | "submit" | "reset";
+  class?: string;
+}
+
+const { href, variant = "primary", type = "button", class: className = "" } = Astro.props;
+
+const base =
+  "inline-flex items-center gap-2 px-6 py-3 text-sm tracking-tight transition-[transform,background-color,color,border-color] duration-200 ease-[var(--ease-out-soft)]";
+
+const variants = {
+  primary:
+    "bg-dark text-on-dark hover:-translate-y-[2px] hover:bg-foreground",
+  secondary:
+    "border border-line text-foreground hover:border-accent hover:text-accent",
+  ghost:
+    "text-foreground hover:text-accent",
+};
+
+const cls = `${base} ${variants[variant]} ${className}`.trim();
+---
+
+{href ? (
+  <a href={href} class={cls}>
+    <slot />
+  </a>
+) : (
+  <button type={type} class={cls}>
+    <slot />
+  </button>
+)}

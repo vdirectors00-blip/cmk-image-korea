@@ -1,0 +1,59 @@
+---
+// 매거진 카테고리 카드 — Vogue/MarieClaire 톤.
+// 인덱스 페이지에서 서브 카테고리 진입점으로 사용.
+import { urlFor } from "@/lib/image";
+import type { SanityImage } from "@/types/sanity";
+
+interface Props {
+  href: string;
+  eyebrow: string;
+  title: string;
+  description?: string;
+  image?: SanityImage;
+  /** Sanity image 비어있을 때 사용할 fallback 이미지 src (예: "/images/services/executive.png") */
+  fallbackSrc?: string;
+  /** 카드 비율 — default 4:5. wide면 16:10 */
+  aspect?: "portrait" | "wide";
+}
+
+const { href, eyebrow, title, description, image, fallbackSrc, aspect = "portrait" } = Astro.props;
+const aspectClass = aspect === "wide" ? "aspect-[16/10]" : "aspect-[4/5]";
+---
+
+<a href={href} class="group block">
+  <div class:list={["overflow-hidden bg-cream", aspectClass]}>
+    {image ? (
+      <img
+        src={urlFor(image).width(900).height(aspect === "wide" ? 563 : 1125).fit("crop").url()}
+        alt=""
+        class="h-full w-full object-cover transition-transform duration-500 ease-[var(--ease-out-soft)] group-hover:scale-[1.03]"
+        loading="lazy"
+      />
+    ) : fallbackSrc ? (
+      <img
+        src={fallbackSrc}
+        alt=""
+        class="h-full w-full object-cover transition-transform duration-500 ease-[var(--ease-out-soft)] group-hover:scale-[1.03]"
+        loading="lazy"
+      />
+    ) : (
+      <div class="flex h-full w-full items-end justify-end p-4 text-[10px] uppercase tracking-[0.2em] text-faint">
+        Photo: Coming Soon
+      </div>
+    )}
+  </div>
+  <p class="mt-5 text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">
+    {eyebrow}
+  </p>
+  <h3 class="mt-2 font-serif text-[clamp(24px,2.4vw,32px)] leading-[1.2] tracking-[-0.01em] text-foreground transition-colors group-hover:text-accent">
+    {title}
+  </h3>
+  {description && (
+    <p class="mt-3 text-sm leading-[1.7] text-muted line-clamp-2">
+      {description}
+    </p>
+  )}
+  <span class="mt-4 inline-block text-xs uppercase tracking-[0.18em] text-foreground underline-offset-4 group-hover:underline">
+    Read more →
+  </span>
+</a>

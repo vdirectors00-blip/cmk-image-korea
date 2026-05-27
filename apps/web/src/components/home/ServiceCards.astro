@@ -1,0 +1,77 @@
+---
+import { urlFor } from "@/lib/image";
+import SectionTitle from "@/components/common/SectionTitle.astro";
+import { SERVICE_HERO_FALLBACK } from "@/lib/service-hero-fallback";
+import type { Service } from "@/types/sanity";
+
+interface Props {
+  services: Service[];
+}
+
+const { services } = Astro.props;
+---
+
+<section class="bg-background">
+  <div class="mx-[var(--divider-inset)] border-t border-foreground"></div>
+  <div class="mx-auto max-w-[var(--container-max)] px-[var(--container-padding)] py-32">
+    <SectionTitle
+      eyebrow="Consulting"
+      title="CMK가 제안하는 네 가지 길"
+      subtitle="한 명의 인상이, 회사의 인상이 됩니다."
+    />
+
+    {services.length === 0 ? (
+      <p class="mt-16 text-center text-sm text-faint">
+        [ 컨설팅 영역 데이터가 아직 없습니다 · Sanity Studio에서 추가하세요 ]
+      </p>
+    ) : (
+      <div class="mt-16 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+        {services.slice(0, 4).map((service) => (
+          <a
+            href={`/consulting/${service.slug.current}`}
+            class="group block origin-bottom-left transition-transform duration-500 ease-[var(--ease-out-soft)] hover:scale-[1.02]"
+          >
+            <div class="aspect-[4/5] overflow-hidden bg-panel">
+              {service.heroImage ? (
+                <img
+                  src={urlFor(service.heroImage).width(600).height(750).fit("crop").url()}
+                  alt={service.title.ko}
+                  class="h-full w-full object-cover transition-transform duration-500 ease-[var(--ease-out-soft)] group-hover:scale-[1.03]"
+                  loading="lazy"
+                />
+              ) : SERVICE_HERO_FALLBACK[service.category] ? (
+                <img
+                  src={SERVICE_HERO_FALLBACK[service.category]}
+                  alt={service.title.ko}
+                  class="h-full w-full object-cover transition-transform duration-500 ease-[var(--ease-out-soft)] group-hover:scale-[1.03]"
+                  loading="lazy"
+                />
+              ) : (
+                <div class="flex h-full w-full items-end justify-end p-4 text-[10px] text-faint">
+                  Photo: Coming Soon
+                </div>
+              )}
+            </div>
+            <p class="mt-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">
+              {service.category === "corporate" ? "Corporate" :
+               service.category === "executive" ? "Executive PI" :
+               service.category === "public" ? "Public" :
+               service.category === "media" ? "Media" : "Personal"}
+            </p>
+            <h3 class="mt-2 font-serif text-2xl leading-tight text-foreground transition-colors group-hover:text-accent">
+              {service.title.ko}
+            </h3>
+            {service.summary?.ko && (
+              <p class="mt-3 line-clamp-2 text-sm text-muted">
+                {service.summary.ko}
+              </p>
+            )}
+            <span class="mt-4 inline-block text-sm text-foreground underline-offset-4 group-hover:underline">
+              자세히 →
+            </span>
+          </a>
+        ))}
+      </div>
+    )}
+  </div>
+</section>

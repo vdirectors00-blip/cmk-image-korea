@@ -1,0 +1,54 @@
+---
+// SSG 환경에서 query string 필터 — 클라이언트 JS (§6.10 패턴).
+// 사용 예:
+//   <div data-filter-root>
+//     {items.map(i => <div data-card data-category={i.category}>...</div>)}
+//   </div>
+//   <PageHead navItems={...} filterKey="category" />  ← 내부에서 [data-filter-nav="category"]
+//   <FilterScript filterKey="category" defaultValue="corporate" />
+interface Props {
+  filterKey: string;
+  /** URL 에 해당 키가 없을 때 사용할 기본값. 미지정 시 모든 카드 노출. */
+  defaultValue?: string;
+}
+const { filterKey, defaultValue = "" } = Astro.props;
+---
+
+<script is:inline define:vars={{ FILTER_KEY: filterKey, DEFAULT_VALUE: defaultValue }}>
+  (function () {
+    const KEY = FILTER_KEY;
+    const DEFAULT = DEFAULT_VALUE;
+    const cards = document.querySelectorAll("[data-card]");
+    const nav = document.querySelector(`[data-filter-nav="${KEY}"]`);
+    const navLinks = nav ? nav.querySelectorAll("a") : [];
+
+    function apply() {
+      const urlValue = new URL(window.location.href).searchParams.get(KEY);
+      // URL 에 키 없으면 default 사용. default 도 "" 면 모든 카드 노출.
+      const value = urlValue ?? DEFAULT;
+      // 카드 필터
+      cards.forEach((c) => {
+        const cardValue = c.getAttribute("data-" + KEY) ?? "";
+        const match = value === "" || cardValue === value;
+        c.classList.toggle("hidden", !match);
+      });
+      // nav active 토글
+      navLinks.forEach((a) => {
+        const linkValue = new URL(a.href).searchParams.get(KEY) ?? "";
+        a.classList.toggle("is-active", linkValue === value);
+      });
+    }
+
+    // History 사용 — 새로고침 없이 URL 만 갱신
+    navLinks.forEach((a) => {
+      a.addEventListener("click", (e) => {
+        e.preventDefault();
+        const target = new URL(a.href, window.location.origin);
+        history.pushState({}, "", target.pathname + target.search);
+        apply();
+      });
+    });
+    window.addEventListener("popstate", apply);
+    apply();
+  })();
+</script>

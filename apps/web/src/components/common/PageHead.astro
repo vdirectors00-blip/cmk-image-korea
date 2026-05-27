@@ -1,0 +1,61 @@
+---
+// 매거진 카테고리 페이지 헤드 — VOGUE/MARIE 톤.
+// 헤더 바로 아래에 위치. 가운데 정렬 큰 세리프 제목 + 부제 + 서브 카테고리 메뉴.
+interface NavItem {
+  label: string;
+  href: string;
+  active?: boolean;
+}
+
+interface Props {
+  title: string;
+  subtitle?: string;
+  navItems?: NavItem[];
+  /** §6.10 클라이언트 필터 — 지정 시 nav ul 에 `data-filter-nav` 부착 */
+  filterKey?: string;
+}
+
+const { title, subtitle, navItems, filterKey } = Astro.props;
+---
+
+<section class="bg-background">
+  <div class="mx-auto max-w-[var(--container-max-wide)] px-[var(--container-padding)] py-20 text-center">
+    {/* 큰 italic 세리프 제목 — Tailwind arbitrary clamp 가 jit 에 안 잡혀서 inline style 로 강제 */}
+    <h1
+      class="font-serif italic lowercase leading-[0.9] tracking-[-0.03em] text-foreground"
+      style="font-size: clamp(30px, 5.5vw, 80px);"
+    >
+      {title}
+    </h1>
+
+    {subtitle && (
+      <p class="mt-6 text-sm text-muted">{subtitle}</p>
+    )}
+
+    {navItems && navItems.length > 0 && (
+      <nav aria-label="Sub categories" class="mt-12">
+        {/* gap utility 도 동일 사유로 inline 처리 */}
+        <ul
+          class="flex flex-wrap items-center justify-center"
+          style="row-gap: 0.75rem; column-gap: 3rem;"
+          data-filter-nav={filterKey}
+        >
+          {navItems.map((item) => {
+            const baseLink = "font-serif italic tracking-tight transition-colors duration-200 ease-[var(--ease-out-soft)] text-muted hover:text-foreground";
+            return (
+              <li>
+                <a
+                  href={item.href}
+                  class={`${baseLink} ${item.active ? "is-active" : ""}`}
+                  style="font-size: clamp(16px, 1.9vw, 29px);"
+                >
+                  {item.label}
+                </a>
+              </li>
+            );
+          })}
+        </ul>
+      </nav>
+    )}
+  </div>
+</section>

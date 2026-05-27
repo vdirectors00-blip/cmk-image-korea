@@ -1,0 +1,96 @@
+---
+// Post 카드 (v1.3.16) — Media / News 분기.
+// Media (강의·미디어): 16:9 영상 첫 프레임 thumbnail + ▷ play overlay. 클릭 → /community/[slug] 에서 native 재생.
+// News (뉴스): 텍스트 중심 (대형 italic 제목 + 발췌).
+import { urlFor } from "@/lib/image";
+import { pickLocale } from "@/types/sanity";
+import type { Post } from "@/types/sanity";
+
+interface Props {
+  post: Post;
+}
+
+const { post } = Astro.props;
+const isMedia = post.category === "강의·미디어";
+const hasVideo = !!post.videoUrl;
+const isExternal = !hasVideo && !!post.externalUrl;
+const href = hasVideo
+  ? `/community/${post.slug.current}`
+  : (post.externalUrl ?? `/community/${post.slug.current}`);
+
+const formatDate = (iso?: string) =>
+  iso
+    ? new Date(iso).toLocaleDateString("ko-KR", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      })
+    : "";
+---
+
+<a
+  href={href}
+  target={isExternal ? "_blank" : undefined}
+  rel={isExternal ? "noopener noreferrer" : undefined}
+  class="group block"
+>
+  {isMedia ? (
+    <>
+      <div class="relative aspect-[16/9] overflow-hidden bg-cream">
+        {hasVideo ? (
+          <video
+            src={post.videoUrl}
+            preload="metadata"
+            muted
+            playsinline
+            class="h-full w-full object-cover grayscale brightness-90 transition-[transform,filter] duration-500 ease-[var(--ease-out-soft)] group-hover:scale-[1.03] group-hover:grayscale-0 group-hover:brightness-100"
+          />
+        ) : post.coverImage ? (
+          <img
+            src={urlFor(post.coverImage).width(900).height(506).fit("crop").url()}
+            alt=""
+            class="h-full w-full object-cover grayscale brightness-90 transition-[transform,filter] duration-500 ease-[var(--ease-out-soft)] group-hover:scale-[1.03] group-hover:grayscale-0 group-hover:brightness-100"
+            loading="lazy"
+          />
+        ) : (
+          <div class="flex h-full w-full items-end justify-end p-4 text-[10px] uppercase tracking-[0.2em] text-faint">
+            Video: Coming Soon
+          </div>
+        )}
+        <div class="pointer-events-none absolute inset-0 flex items-center justify-center">
+          <span class="flex h-16 w-16 items-center justify-center rounded-full border border-white/70 bg-black/30 text-white backdrop-blur-sm transition-transform duration-300 group-hover:scale-110">
+            <svg viewBox="0 0 24 24" class="ml-1 h-6 w-6" fill="currentColor" aria-hidden="true">
+              <path d="M8 5v14l11-7z" />
+            </svg>
+          </span>
+        </div>
+      </div>
+      <p class="mt-5 text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">
+        {post.category} · {formatDate(post.publishedAt)}
+      </p>
+      <h3 class="mt-2 font-serif text-2xl leading-tight text-foreground transition-colors group-hover:text-accent break-keep">
+        {pickLocale(post.title)}
+      </h3>
+      <span class="mt-4 inline-block text-xs uppercase tracking-[0.18em] text-foreground underline-offset-4 group-hover:underline">
+        Watch →
+      </span>
+    </>
+  ) : (
+    <div class="border-t border-foreground pt-8">
+      <p class={`text-[11px] font-semibold uppercase tracking-[0.18em] ${post.isPinned ? "text-accent" : "text-muted"}`}>
+        {post.isPinned ? "공지" : "News"} · {formatDate(post.publishedAt)}
+      </p>
+      <h3 class="mt-5 font-serif italic text-[clamp(13px,1.4vw,20px)] leading-[1.25] tracking-[-0.01em] text-foreground transition-colors group-hover:text-accent break-keep">
+        {pickLocale(post.title)}
+      </h3>
+      {post.excerpt?.ko && (
+        <p class="mt-5 text-base leading-[1.75] text-muted line-clamp-4 break-keep">
+          {pickLocale(post.excerpt)}
+        </p>
+      )}
+      <span class="mt-6 inline-block text-xs uppercase tracking-[0.18em] text-foreground underline-offset-4 group-hover:underline">
+        Read more →
+      </span>
+    </div>
+  )}
+</a>

@@ -1,0 +1,33 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import ScrollToTop from "@/components/common/ScrollToTop.astro";
+import ColorQuiz from "@/components/quiz/ColorQuiz";
+---
+
+<BaseLayout
+  title="5초 퍼스널컬러 진단 — CMK Image Korea"
+  description="당신의 컬러를 1분 안에 — 5문항으로 끝나는 퍼스널컬러 진단"
+>
+  <section class="bg-background">
+    <div class="mx-auto max-w-[var(--container-max-wide)] px-[var(--container-padding)] py-24">
+      <div class="text-center">
+        <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">
+          Interactive
+        </p>
+        <h1
+          class="mt-4 font-serif italic lowercase leading-[0.9] tracking-[-0.03em] text-foreground"
+          style="font-size: clamp(30px, 5.5vw, 80px);"
+        >
+          color
+        </h1>
+        <p class="mt-4 text-sm text-muted">5문항 · 약 1분</p>
+      </div>
+
+      <div class="mt-24">
+        <ColorQuiz client:load />
+      </div>
+    </div>
+  </section>
+
+  <ScrollToTop />
+</BaseLayout>

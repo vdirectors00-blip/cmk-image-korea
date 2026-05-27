@@ -1,0 +1,170 @@
+---
+// §6.2 섹션 2 — 브랜드 철학 (v1.3.14)
+// audit §2-1 정식 카피 — CMK 3C 정신 + 3축 방법론.
+// 디자인 = 큰 숫자 zigzag (이미지 박스 폐기). 페이지 압축 + 매거진 톤.
+
+const threeC = [
+  {
+    label: "Creative",
+    title: "Creative Partner",
+    body: "CMK 는 고객의 Creative Partner 가 되겠습니다.",
+  },
+  {
+    label: "People",
+    title: "Creative Expert Group",
+    body: "대한민국 최고의 이미지컨설턴트로서 Creative Expert Group 의 자부심을 지킵니다.",
+  },
+  {
+    label: "Communication",
+    title: "Creative Service",
+    body: "지금껏 경험하지 못한 Creative Service 로 고객과 소통합니다.",
+  },
+];
+
+const threeAxes = [
+  {
+    label: "Appearance",
+    title: "호감",
+    body: "매력적인 외모는 사람의 마음을 사로잡아 호감을 느끼게 합니다.",
+  },
+  {
+    label: "Behavior",
+    title: "기억",
+    body: "매력적인 행동은 사람의 마음을 사로잡아 오랫동안 기억하게 합니다.",
+  },
+  {
+    label: "Communication",
+    title: "감동",
+    body: "매력적인 커뮤니케이션은 사람의 마음을 사로잡아 감동하게 합니다.",
+  },
+];
+
+interface Item {
+  label: string;
+  title: string;
+  body: string;
+}
+---
+
+<section class="bg-background">
+  <div class="mx-auto max-w-[var(--container-max)] px-[var(--container-padding)] py-32">
+
+    {/* 상단 — 큰 제목 + 핵심 메시지 */}
+    <div class="grid grid-cols-1 gap-12 md:grid-cols-12 md:gap-16">
+      <div class="md:col-span-4">
+        <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">
+          Philosophy
+        </p>
+        <h2 class="mt-4 font-serif text-[clamp(40px,5vw,72px)] leading-[1.1] tracking-[-0.02em] text-foreground">
+          이미지는,<br />언어다.
+        </h2>
+      </div>
+      <div class="md:col-span-8">
+        <div class="text-base leading-[1.8] text-soft">
+          <p>
+            20여 년의 현장 컨설팅. CMK 는 맞춤형 이미지 컨설팅과
+            전문가 교육 두 축으로 한 사람의 인상을 다듬는 일을
+          </p>
+          <p class="mt-2">
+            이어 왔습니다.
+          </p>
+          <p class="mt-8">
+            한 사람의 인상이 어떻게 한 회사의 인상이 되는지 —
+            강연장에서, 회의실에서, 인터뷰에서, 방송 카메라 앞에서.
+          </p>
+          <p class="mt-2">
+            CMK 는 그 결을 함께 만들었습니다.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    {/* 3C Spirit — 큰 숫자 zigzag */}
+    <div class="mt-24 border-t border-foreground pt-12">
+      <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">
+        3C Spirit
+      </p>
+      <h3 class="mt-4 font-serif text-[clamp(32px,4vw,52px)] leading-[1.1] tracking-[-0.01em] text-foreground">
+        Creative · People · Communication
+      </h3>
+
+      <div class="mt-12 divide-y divide-line">
+        {threeC.map((item: Item, i: number) => {
+          const right = i % 2 === 1;
+          const num = String(i + 1).padStart(2, "0");
+          return (
+            <div class="py-10 md:py-14">
+              <div class={`grid grid-cols-12 items-center gap-6 md:gap-10 ${right ? "md:text-right" : ""}`}>
+                {/* 큰 숫자 */}
+                <div class={`col-span-12 md:col-span-3 ${right ? "md:order-2" : "md:order-1"}`}>
+                  <p
+                    class="font-serif italic leading-[0.85] text-foreground/15"
+                    style="font-size: clamp(80px, 11vw, 160px);"
+                  >
+                    {num}
+                  </p>
+                </div>
+                {/* 텍스트 */}
+                <div class={`col-span-12 md:col-span-9 ${right ? "md:order-1" : "md:order-2"}`}>
+                  <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">
+                    {item.label}
+                  </p>
+                  <h4 class="mt-3 font-serif text-[clamp(28px,3vw,44px)] leading-[1.1] tracking-[-0.01em] text-foreground">
+                    {item.title}
+                  </h4>
+                  <p class={`mt-4 text-base leading-[1.7] text-soft ${right ? "md:ml-auto" : ""} max-w-xl`}>
+                    {item.body}
+                  </p>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+
+    {/* 3 Axes — 큰 한글 zigzag (3C 와 반대 방향) */}
+    <div class="mt-24 border-t border-foreground pt-12">
+      <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">
+        3 Axes
+      </p>
+      <h3 class="mt-4 font-serif text-[clamp(32px,4vw,52px)] leading-[1.1] tracking-[-0.01em] text-foreground">
+        호감 · 기억 · 감동
+      </h3>
+
+      <div class="mt-12 divide-y divide-line">
+        {threeAxes.map((item: Item, i: number) => {
+          const right = i % 2 === 0;
+          return (
+            <div class="py-10 md:py-14">
+              <div class={`grid grid-cols-12 items-center gap-6 md:gap-10 ${right ? "md:text-right" : ""}`}>
+                {/* 큰 한글 */}
+                <div class={`col-span-12 md:col-span-3 ${right ? "md:order-2" : "md:order-1"}`}>
+                  <p
+                    class="font-serif italic leading-[0.85] text-foreground/15"
+                    style="font-size: clamp(60px, 9vw, 130px);"
+                  >
+                    {item.title}
+                  </p>
+                </div>
+                {/* 텍스트 */}
+                <div class={`col-span-12 md:col-span-9 ${right ? "md:order-1" : "md:order-2"}`}>
+                  <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">
+                    {item.label}
+                  </p>
+                  <h4 class="mt-3 font-serif text-[clamp(28px,3vw,44px)] leading-[1.1] tracking-[-0.01em] text-foreground">
+                    {item.title}
+                  </h4>
+                  <p class={`mt-4 text-base leading-[1.7] text-soft ${right ? "md:ml-auto" : ""} max-w-xl`}>
+                    {item.body}
+                  </p>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+
+  </div>
+</section>

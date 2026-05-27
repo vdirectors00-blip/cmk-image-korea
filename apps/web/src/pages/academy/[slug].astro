@@ -1,0 +1,177 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import AcademyPageHead from "@/components/academy/AcademyPageHead.astro";
+import PortableText from "@/components/common/PortableText.astro";
+import ScrollToTop from "@/components/common/ScrollToTop.astro";
+import { sanityClient } from "@/lib/sanity";
+import { academyCourseBySlugQuery, academyCourseSlugsQuery } from "@/lib/queries";
+import { pickLocale } from "@/types/sanity";
+import type { AcademyCourse, PortableTextBlock } from "@/types/sanity";
+
+export async function getStaticPaths() {
+  const slugs = await sanityClient.fetch<string[]>(academyCourseSlugsQuery);
+  return slugs.map((slug) => ({ params: { slug } }));
+}
+
+const { slug } = Astro.params;
+const course = await sanityClient.fetch<AcademyCourse | null>(academyCourseBySlugQuery, { slug });
+
+if (!course) {
+  return Astro.redirect("/academy");
+}
+
+// v1.3.15 — 핵심 정보 박스 (특징·강의일정·교육인원). 강좌별 hardcoded.
+const COURSE_INFO: Record<string, { format: string; schedule: string; capacity: string }> = {
+  "taste-image-scale": {
+    format: "강의식",
+    schedule: "추후 통보",
+    capacity: "5명 정원",
+  },
+  "image-consultant": {
+    format: "강의식 + 1:1 코칭식",
+    schedule: "연 2회 · 5일 과정",
+    capacity: "10명 정원",
+  },
+  "makeup": {
+    format: "강의식 + 1:1 코칭식",
+    schedule: "추후 통보",
+    capacity: "5~10명",
+  },
+  "personal-color": {
+    format: "강의식 + 1:1 코칭식",
+    schedule: "3~5일 (추후 통보)",
+    capacity: "5~10명",
+  },
+};
+
+const info = COURSE_INFO[course.slug.current];
+
+// v1.3.16 — 사용자 제공 academy 메인 image (apps/web/public/images/academy/{slug}.png).
+const ACADEMY_HERO: Record<string, string> = {
+  "taste-image-scale": "/images/academy/taste-image-scale.png",
+  "image-consultant": "/images/academy/image-consultant.png",
+  "makeup": "/images/academy/makeup.png",
+  "personal-color": "/images/academy/personal-color.png",
+};
+const heroSrc = ACADEMY_HERO[course.slug.current];
+
+// 사용자 결정 — image-consultant / makeup 은 sticky 제거 (이미지 상단 고정).
+const stickySidebar = !(course.slug.current === "image-consultant" || course.slug.current === "makeup");
+
+// image-consultant 만 — "2일" H2 기준 curriculum 분할 (1일차까지 좌 7 / 2일차부터 풀폭).
+function splitCurriculumAtH2(blocks: PortableTextBlock[], markerStart: string): {
+  head: PortableTextBlock[];
+  tail: PortableTextBlock[];
+} {
+  const idx = blocks.findIndex((b) => {
+    if (b._type !== "block" || b.style !== "h2" || !Array.isArray(b.children)) return false;
+    return b.children.some((c) => typeof c.text === "string" && c.text.startsWith(markerStart));
+  });
+  if (idx < 0) return { head: blocks, tail: [] };
+  return { head: blocks.slice(0, idx), tail: blocks.slice(idx) };
+}
+
+const curriculumBlocks: PortableTextBlock[] = course.curriculum?.ko ?? [];
+const shouldSplit = course.slug.current === "image-consultant";
+const { head: headBlocks, tail: tailBlocks } = shouldSplit
+  ? splitCurriculumAtH2(curriculumBlocks, "2일")
+  : { head: curriculumBlocks, tail: [] };
+
+const proseClass =
+  "break-keep [&_h2]:mt-14 [&_h2]:font-serif [&_h2]:text-3xl [&_h2]:tracking-[-0.01em] [&_h2]:text-foreground [&_h2:first-child]:mt-0 [&_h3]:mt-8 [&_h3]:font-serif [&_h3]:text-xl [&_h3]:text-foreground [&_p]:text-base [&_p]:leading-[1.85] [&_p]:text-soft";
+---
+
+<BaseLayout
+  title={`${pickLocale(course.title)} — Academy · CMK Image Korea`}
+  description={pickLocale(course.summary)}
+>
+  <AcademyPageHead active={course.slug.current} />
+
+  <article class="bg-background">
+    <div class="mx-auto max-w-[var(--container-max)] px-[var(--container-padding)] py-24">
+      <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">
+        {course.level}
+      </p>
+      <h2 class="mt-4 font-serif text-[clamp(40px,5vw,72px)] leading-[1.1] tracking-[-0.02em] text-foreground">
+        {pickLocale(course.title)}
+      </h2>
+
+      {/* 핵심 정보 박스 — 특징·강의일정·교육인원 */}
+      <div class="mt-12 grid grid-cols-1 gap-6 border-y border-foreground py-8 md:grid-cols-3">
+        <div>
+          <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">특징</p>
+          <p class="mt-2 font-serif text-xl text-foreground break-keep">
+            {info?.format ?? "강의식"}
+          </p>
+        </div>
+        <div>
+          <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">강의일정 / 시간</p>
+          <p class="mt-2 font-serif text-xl text-foreground break-keep">
+            {info?.schedule ?? course.schedule ?? "추후 통보"}
+          </p>
+        </div>
+        <div>
+          <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">교육 인원</p>
+          <p class="mt-2 font-serif text-xl text-foreground break-keep">
+            {info?.capacity ?? (course.capacity ? `${course.capacity}명` : "-")}
+          </p>
+        </div>
+      </div>
+
+      {/* 본문 grid 12-col — 좌 7 (summary + head curriculum) / 우 5 (사진 placeholder) */}
+      <div class="mt-16 grid grid-cols-1 gap-12 md:grid-cols-12 md:gap-16">
+        <div class="md:col-span-7">
+          {course.summary && (
+            <p class="text-lg leading-[1.7] text-soft break-keep">
+              {pickLocale(course.summary)}
+            </p>
+          )}
+
+          {headBlocks.length > 0 && (
+            <div class={`mt-12 space-y-4 ${proseClass}`}>
+              <PortableText blocks={headBlocks} />
+            </div>
+          )}
+        </div>
+
+        {/* 우 — 사진 (v1.3.16 사용자 제공). sticky 조건부 */}
+        <div class="md:col-span-5">
+          <div class={stickySidebar ? "md:sticky md:top-24" : ""}>
+            <div class="aspect-[3/4] overflow-hidden bg-cream">
+              {heroSrc ? (
+                <img
+                  src={heroSrc}
+                  alt=""
+                  class="h-full w-full object-cover"
+                  loading="lazy"
+                />
+              ) : (
+                <div class="flex h-full w-full items-end justify-end p-4 text-[10px] uppercase tracking-[0.2em] text-faint">
+                  Photo: Coming Soon
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 풀폭 — 2일차부터 (image-consultant 만) */}
+      {tailBlocks.length > 0 && (
+        <div class={`mt-12 space-y-4 ${proseClass}`}>
+          <PortableText blocks={tailBlocks} />
+        </div>
+      )}
+
+      <div class="mt-24 text-center">
+        <a
+          href={`/contact?form=academy&course=${course.slug.current}`}
+          class="inline-block border border-foreground px-8 py-4 text-sm uppercase tracking-[0.18em] text-foreground transition-[transform,background-color,color] duration-200 ease-[var(--ease-out-soft)] hover:-translate-y-[2px] hover:bg-foreground hover:text-on-dark"
+        >
+          수강 문의 →
+        </a>
+      </div>
+    </div>
+  </article>
+
+  <ScrollToTop />
+</BaseLayout>

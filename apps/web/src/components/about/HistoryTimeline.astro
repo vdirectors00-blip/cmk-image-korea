@@ -1,0 +1,162 @@
+---
+// §6.2 섹션 4 — HISTORY 타임라인 (v1.3.14)
+// 디자인 = 큰 연도 zigzag + 가운데 timeline line. 매거진 톤.
+// audit §2-4 전체 + 2017-2023 placeholder.
+
+interface Milestone {
+  year: string;
+  title: string;
+  note?: string;
+  /**
+   * 2017+ 자료 입수 시 placeholder 행 추가용. 현 9 마일스톤 (2008-2016) 은 모두 false.
+   * 클라이언트 자료 들어오면 isPlaceholder: true 로 미리 자리 잡고, 자료 채워지면 false 로 전환.
+   */
+  isPlaceholder?: boolean;
+}
+
+// v1.3.16 — 사용자 결정: 2008 "사업자등록 기준" note 제거. 감사원 언급 제거 (사용자 정정).
+const milestones: Milestone[] = [
+  { year: "2008", title: "(주) CMK 이미지코리아 설립" },
+  { year: "2009", title: "문화체육관광부 장·차관 미디어 트레이닝" },
+  { year: "2010", title: "국무총리실 국장급 미디어 트레이닝", note: "정운찬 국무총리" },
+  { year: "2011", title: "이화여대 김선욱 총장 PI 진단" },
+  { year: "2012", title: "합동참모본부 / 문화체육관광부 각부처 국장" },
+  { year: "2013", title: "삼성전자 류승규 상무", note: "SK 임원진 출강 시작 (~2014)" },
+  { year: "2014", title: "현대자동차 본사 임원진 96명 PI 진단", note: "새누리당 김무성 대표" },
+  { year: "2015", title: "현대자동차 제네시스 매니저", note: "문화체육관광부 국장급" },
+  { year: "2016", title: "동아일보 채널A 임원진 24차수", note: "중국 북경 GIRL UP 진출" },
+];
+---
+
+<section class="bg-background">
+  <div class="mx-auto max-w-[var(--container-max)] px-[var(--container-padding)] py-32">
+
+    {/* 헤더 */}
+    <div class="grid grid-cols-1 gap-12 md:grid-cols-12 md:gap-16">
+      <div class="md:col-span-5">
+        <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">
+          History
+        </p>
+        <h2 class="mt-4 font-serif text-[clamp(40px,5vw,72px)] leading-[1.1] tracking-[-0.02em] text-foreground">
+          현장 20여 년의<br />결을 따라.
+        </h2>
+      </div>
+      <div class="md:col-span-7">
+        <p class="text-base leading-[1.7] text-soft">
+          2009년 문화체육관광부 장·차관 미디어 트레이닝을 시작으로,
+          국무총리실·감사원·대기업 임원진 PI 진단까지 — IMAGE BUILDING PROGRAM 의 결을 이어 왔습니다.
+        </p>
+      </div>
+    </div>
+
+    {/* zigzag timeline */}
+    <div class="relative mt-24">
+      {/* 가운데 verical line — md+ 에서만 */}
+      <div
+        class="absolute left-1/2 top-0 hidden h-full w-px -translate-x-1/2 bg-line md:block"
+        aria-hidden="true"
+      ></div>
+
+      <ol class="space-y-10 md:space-y-16">
+        {milestones.map((m, i) => {
+          const right = i % 2 === 1;
+          return (
+            <li class="history-reveal relative grid grid-cols-1 items-center gap-3 opacity-0 translate-y-8 transition-[opacity,transform] duration-[2000ms] ease-[var(--ease-out-soft)] md:grid-cols-2 md:gap-12">
+              {/* 가운데 dot — md+ */}
+              <span
+                class={`absolute left-1/2 top-3 hidden h-3 w-3 -translate-x-1/2 rounded-full md:block ${
+                  m.isPlaceholder
+                    ? "border border-faint bg-background"
+                    : "bg-foreground"
+                }`}
+                aria-hidden="true"
+              ></span>
+
+              {/* 좌측 — 짝수 항목 (i % 2 === 0) 의 콘텐츠 */}
+              <div class={right ? "md:col-start-1 md:invisible md:h-0" : "md:text-right md:pr-12"}>
+                {!right && (
+                  <>
+                    <p
+                      class={`font-serif italic leading-[0.95] tracking-[-0.02em] ${
+                        m.isPlaceholder ? "text-faint" : "text-foreground"
+                      }`}
+                      style="font-size: clamp(40px, 6vw, 84px);"
+                    >
+                      {m.year}
+                    </p>
+                    <h3
+                      class={`mt-3 ${
+                        m.isPlaceholder
+                          ? "text-sm font-normal text-faint"
+                          : "text-base font-semibold text-foreground"
+                      }`}
+                    >
+                      {m.title}
+                    </h3>
+                    {m.note && !m.isPlaceholder && (
+                      <p class="mt-1 text-sm text-muted">{m.note}</p>
+                    )}
+                  </>
+                )}
+              </div>
+
+              {/* 우측 — 홀수 항목 (i % 2 === 1) 의 콘텐츠 */}
+              <div class={right ? "md:text-left md:pl-12" : "md:invisible md:h-0"}>
+                {right && (
+                  <>
+                    <p
+                      class={`font-serif italic leading-[0.95] tracking-[-0.02em] ${
+                        m.isPlaceholder ? "text-faint" : "text-foreground"
+                      }`}
+                      style="font-size: clamp(40px, 6vw, 84px);"
+                    >
+                      {m.year}
+                    </p>
+                    <h3
+                      class={`mt-3 ${
+                        m.isPlaceholder
+                          ? "text-sm font-normal text-faint"
+                          : "text-base font-semibold text-foreground"
+                      }`}
+                    >
+                      {m.title}
+                    </h3>
+                    {m.note && !m.isPlaceholder && (
+                      <p class="mt-1 text-sm text-muted">{m.note}</p>
+                    )}
+                  </>
+                )}
+              </div>
+            </li>
+          );
+        })}
+      </ol>
+    </div>
+  </div>
+</section>
+
+<script is:inline>
+  (function () {
+    const items = document.querySelectorAll(".history-reveal");
+    if (items.length === 0) return;
+    const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce) {
+      items.forEach((el) => {
+        el.classList.remove("opacity-0", "translate-y-8");
+      });
+      return;
+    }
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            entry.target.classList.remove("opacity-0", "translate-y-8");
+            observer.unobserve(entry.target);
+          }
+        }
+      },
+      { threshold: 0.15, rootMargin: "0px 0px -8% 0px" }
+    );
+    items.forEach((el) => observer.observe(el));
+  })();
+</script>

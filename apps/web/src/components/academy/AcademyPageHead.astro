@@ -1,0 +1,26 @@
+---
+// Academy 전용 PageHead — 4 강좌 직접 진입 (v1.3.15)
+// 사용자 결정 — consulting 패턴과 통일. level 필터 폐기, 4 강좌 slug 기반 nav.
+import PageHead from "@/components/common/PageHead.astro";
+
+interface Props {
+  active?: string; // 강좌 slug
+}
+
+const { active } = Astro.props;
+
+const COURSES: Array<{ slug: string; label: string }> = [
+  { slug: "taste-image-scale", label: "Taste Image Scale" },
+  { slug: "image-consultant", label: "이미지 컨설턴트" },
+  { slug: "makeup", label: "메이크업" },
+  { slug: "personal-color", label: "퍼스널 컬러" },
+];
+
+const navItems = COURSES.map((c) => ({
+  label: c.label,
+  href: `/academy/${c.slug}`,
+  active: c.slug === active,
+}));
+---
+
+<PageHead title="Academy" navItems={navItems} />

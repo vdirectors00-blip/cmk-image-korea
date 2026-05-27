@@ -1,0 +1,42 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Hero from "@/components/home/Hero.astro";
+import ColorQuizSection from "@/components/home/ColorQuizSection.astro";
+import ServiceCards from "@/components/home/ServiceCards.astro";
+import LogoWall from "@/components/home/LogoWall.astro";
+import Stats from "@/components/home/Stats.astro";
+import CeoIntro from "@/components/home/CeoIntro.astro";
+import ContactCta from "@/components/home/ContactCta.astro";
+import ScrollToTop from "@/components/common/ScrollToTop.astro";
+
+import { sanityClient } from "@/lib/sanity";
+import {
+  servicesAllQuery,
+  clientLogosQuery,
+  statsQuery,
+  ceoQuery,
+} from "@/lib/queries";
+import type { Service, ClientLogo, Stat, Person } from "@/types/sanity";
+
+// 병렬 fetch (Sanity public dataset — token 불필요)
+const [services, logos, stats, ceo] = await Promise.all([
+  sanityClient.fetch<Service[]>(servicesAllQuery),
+  sanityClient.fetch<ClientLogo[]>(clientLogosQuery),
+  sanityClient.fetch<Stat[]>(statsQuery),
+  sanityClient.fetch<Person | null>(ceoQuery),
+]);
+---
+
+<BaseLayout
+  title="CMK Image Korea — 보이는 것이, 전해지는 것입니다"
+  description="30년 헤리티지의 한국 이미지컨설팅 — 기업 출강·임원 PI·미디어 트레이닝"
+>
+  <Hero />
+  <ColorQuizSection />
+  <ServiceCards services={services} />
+  <LogoWall logos={logos} />
+  <Stats stats={stats} />
+  <CeoIntro ceo={ceo} />
+  <ContactCta />
+  <ScrollToTop />
+</BaseLayout>

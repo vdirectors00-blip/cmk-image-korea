@@ -1,0 +1,130 @@
+---
+import { sanityClient } from "@/lib/sanity";
+import { siteSettingsQuery } from "@/lib/queries";
+import { pickLocale, type SiteSettings } from "@/types/sanity";
+
+const site = await sanityClient.fetch<SiteSettings | null>(siteSettingsQuery);
+const year = new Date().getFullYear();
+
+const companyName = pickLocale(site?.companyName) || "CMK Image Korea";
+const address = pickLocale(site?.address);
+
+const siteMap = [
+  { label: "About", href: "/about" },
+  { label: "Consulting", href: "/consulting" },
+  { label: "Academy", href: "/academy" },
+  { label: "Image Lab", href: "/image-lab" },
+  { label: "Community", href: "/community" },
+  { label: "Contact", href: "/contact" },
+];
+
+const socialLinks = [
+  site?.instagram ? { label: "Instagram", href: site.instagram } : null,
+  site?.youtube ? { label: "YouTube", href: site.youtube } : null,
+  site?.facebook ? { label: "Facebook", href: site.facebook } : null,
+  site?.naverBlog ? { label: "Naver Blog", href: site.naverBlog } : null,
+  site?.kakaoChannel ? { label: "KakaoTalk", href: site.kakaoChannel } : null,
+].filter((s): s is { label: string; href: string } => s !== null);
+
+const phoneHref = site?.phone ? `tel:${site.phone.replace(/[^0-9+]/g, "")}` : null;
+const emailHref = site?.email ? `mailto:${site.email}` : null;
+
+const eyebrowClass =
+  "text-[11px] font-semibold uppercase tracking-[0.18em] text-on-dark/50";
+const linkClass =
+  "text-sm text-on-dark/90 transition-colors duration-200 ease-[var(--ease-out-soft)] hover:text-on-dark";
+const legalClass =
+  "text-xs tracking-[0.04em] text-on-dark/50 transition-colors duration-200 ease-[var(--ease-out-soft)] hover:text-on-dark";
+---
+
+<footer class="bg-dark text-on-dark">
+  <div class="mx-auto max-w-[var(--container-max)] px-[var(--container-padding)] py-20">
+    <div class="grid grid-cols-1 gap-14 md:grid-cols-3 md:gap-16">
+
+      <!-- 컬럼 1 — 로고 + 영문 카피 + 회사 정보 -->
+      <div>
+        <p class="font-serif text-2xl tracking-tight">{companyName}</p>
+        <p class="mt-3 font-serif italic text-lg leading-snug text-on-dark/75">
+          What is seen is what is communicated.
+        </p>
+        {(address || site?.ceo || site?.businessNo) && (
+          <address class="mt-10 not-italic text-sm leading-[1.8] text-on-dark/60">
+            {address && <span>{address}</span>}
+            {site?.ceo && (
+              <>
+                {address && <br />}
+                <span>대표 {site.ceo}</span>
+              </>
+            )}
+            {site?.businessNo && (
+              <>
+                <br />
+                <span>사업자등록번호 {site.businessNo}</span>
+              </>
+            )}
+          </address>
+        )}
+      </div>
+
+      <!-- 컬럼 2 — SITE MAP -->
+      <nav aria-label="Footer site map">
+        <p class={eyebrowClass}>Site Map</p>
+        <ul class="mt-6 space-y-3">
+          {siteMap.map((item) => (
+            <li>
+              <a href={item.href} class={linkClass}>{item.label}</a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+
+      <!-- 컬럼 3 — CONNECT -->
+      <div>
+        <p class={eyebrowClass}>Connect</p>
+        {(phoneHref || emailHref) && (
+          <ul class="mt-6 space-y-3">
+            {phoneHref && (
+              <li>
+                <a href={phoneHref} class={linkClass}>T. {site!.phone}</a>
+              </li>
+            )}
+            {emailHref && (
+              <li>
+                <a href={emailHref} class={linkClass}>E. {site!.email}</a>
+              </li>
+            )}
+          </ul>
+        )}
+
+        {socialLinks.length > 0 && (
+          <ul class="mt-10 space-y-3">
+            {socialLinks.map((s) => (
+              <li>
+                <a
+                  href={s.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class={linkClass}
+                >
+                  {s.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </div>
+
+    <!-- 하단 © + 법적 링크 -->
+    <div class="mt-16 flex flex-col gap-4 border-t border-on-dark/10 pt-8 md:flex-row md:items-center md:justify-between">
+      <p class="text-xs tracking-[0.04em] text-on-dark/50">
+        &copy; {year} {companyName}. All rights reserved.
+      </p>
+      <p class="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs">
+        <a href="/privacy" class={legalClass}>개인정보처리방침</a>
+        <span class="text-on-dark/30">·</span>
+        <a href="/terms" class={legalClass}>이용약관</a>
+      </p>
+    </div>
+  </div>
+</footer>

@@ -1,0 +1,63 @@
+---
+// §6.1 섹션 5 — HOME 누적 수치 (v1.3.14)
+// 데이터 0개면 섹션 숨김. 카운트업은 StatsCounter (React island) 위임.
+// 12-col grid — 좌 7: 제목+카피+카운트업 3건 / 우 5: 사진 placeholder (클라이언트 제공 후 Studio 업로드)
+import StatsCounter from "@/components/home/StatsCounter.tsx";
+import type { Stat } from "@/types/sanity";
+
+interface Props {
+  stats: Stat[];
+}
+
+const { stats } = Astro.props;
+---
+
+{stats.length > 0 && (
+  <section class="bg-background">
+    <div class="mx-[var(--divider-inset)] border-t border-foreground"></div>
+    <div class="mx-auto max-w-[var(--container-max)] px-[var(--container-padding)] py-32">
+      <div class="grid grid-cols-1 gap-12 md:grid-cols-12 md:gap-16">
+
+        {/* 좌 — 제목 + 카피 + Stats 3건 */}
+        <div class="md:col-span-7">
+          <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">
+            Heritage
+          </p>
+          <h2 class="mt-4 font-serif text-[clamp(36px,5vw,64px)] leading-[1.1] tracking-[-0.02em] text-foreground">
+            결을 따라온 시간.
+          </h2>
+          <p class="mt-6 max-w-md text-base leading-[1.7] text-soft">
+            한 사람의 인상을 다듬는 일을 오래 이어 왔습니다.
+          </p>
+          <p class="mt-3 max-w-md text-base leading-[1.7] text-soft">
+            시간이 만든 결을 짧게 정리합니다.
+          </p>
+
+          <div class="mt-14">
+            <StatsCounter stats={stats} client:visible />
+          </div>
+
+          <a
+            href="/about/history"
+            class="mt-10 inline-block text-sm text-foreground underline-offset-4 hover:underline hover:text-accent"
+          >
+            자세히 보기 →
+          </a>
+        </div>
+
+        {/* 우 — 사진 (v1.3.16 사용자 제공 heritage.png) */}
+        <div class="md:col-span-5">
+          <div class="aspect-[4/5] overflow-hidden bg-cream">
+            <img
+              src="/images/heritage.png"
+              alt=""
+              class="h-full w-full object-cover"
+              loading="lazy"
+            />
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+)}

@@ -1,0 +1,18 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import AboutPageHead from "@/components/about/AboutPageHead.astro";
+import CeoProfile from "@/components/about/CeoProfile.astro";
+import ScrollToTop from "@/components/common/ScrollToTop.astro";
+
+import { sanityClient } from "@/lib/sanity";
+import { ceoQuery } from "@/lib/queries";
+import type { Person } from "@/types/sanity";
+
+const ceo = await sanityClient.fetch<Person | null>(ceoQuery);
+---
+
+<BaseLayout title="조미경 — About CMK Image Korea">
+  <AboutPageHead active="ceo" />
+  <CeoProfile ceo={ceo} />
+  <ScrollToTop />
+</BaseLayout>

@@ -1,0 +1,89 @@
+---
+// Portable Text 렌더러 — §4.3 localeBlockContent 대응.
+// 약관·텍스트 페이지용. 스타일: h2/h3/p/blockquote/strong/em/link + ul/ol 리스트.
+import type { PortableTextBlock } from "@/types/sanity";
+
+interface Props {
+  blocks: PortableTextBlock[];
+  class?: string;
+}
+
+const { blocks, class: className } = Astro.props;
+
+type MarkDef = { _key: string; _type: string; [k: string]: unknown };
+type Span = { text: string; marks?: string[] };
+
+function esc(s: string): string {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+function renderSpan(text: string, marks: string[], markDefs: MarkDef[]): string {
+  let out = esc(text);
+  for (const mark of marks) {
+    if (mark === "strong") { out = `<strong>${out}</strong>`; continue; }
+    if (mark === "em")     { out = `<em>${out}</em>`; continue; }
+    const def = markDefs.find((d) => d._key === mark);
+    if (def?._type === "link") {
+      const href = esc(String(def.href ?? ""));
+      const extra = def.blank ? ' target="_blank" rel="noopener noreferrer"' : "";
+      out = `<a href="${href}"${extra} class="underline underline-offset-4 hover:text-accent">${out}</a>`;
+    }
+  }
+  return out;
+}
+
+function renderInner(block: PortableTextBlock): string {
+  const markDefs = (block.markDefs as MarkDef[]) ?? [];
+  const children = (block.children as Span[]) ?? [];
+  return children.map((s) => renderSpan(s.text ?? "", s.marks ?? [], markDefs)).join("");
+}
+
+function renderBlock(block: PortableTextBlock): string {
+  if (block._type === "image") return "";
+  const inner = renderInner(block);
+  const style = block.style ?? "normal";
+  if (style === "h2")         return `<h2>${inner}</h2>`;
+  if (style === "h3")         return `<h3>${inner}</h3>`;
+  if (style === "blockquote") return `<blockquote>${inner}</blockquote>`;
+  return `<p>${inner || "&nbsp;"}</p>`;
+}
+
+// 연속 리스트 블록을 <ul>/<ol>로 그룹핑
+function renderBlocks(blocks: PortableTextBlock[]): string {
+  const out: string[] = [];
+  let i = 0;
+  while (i < blocks.length) {
+    const block = blocks[i];
+    if (block.listItem) {
+      const listType = block.listItem as string;
+      const level = (block.level ?? 1) as number;
+      const items: string[] = [];
+      while (
+        i < blocks.length &&
+        blocks[i].listItem === listType &&
+        ((blocks[i].level ?? 1) as number) === level
+      ) {
+        items.push(`<li>${renderInner(blocks[i])}</li>`);
+        i++;
+      }
+      const tag = listType === "bullet" ? "ul" : "ol";
+      out.push(`<${tag}>\n${items.join("\n")}\n</${tag}>`);
+    } else {
+      out.push(renderBlock(block));
+      i++;
+    }
+  }
+  return out.join("\n");
+}
+
+const html = renderBlocks(blocks);
+---
+
+<div
+  class:list={["portable-text", "prose-legal", className]}
+  set:html={html}
+/>

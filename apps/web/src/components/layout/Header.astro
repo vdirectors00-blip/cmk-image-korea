@@ -1,0 +1,48 @@
+---
+const navItems = [
+  { label: "About", href: "/about" },
+  { label: "Consulting", href: "/consulting" },
+  { label: "Academy", href: "/academy" },
+  { label: "Image Lab", href: "/image-lab" },
+  { label: "Community", href: "/community" },
+  { label: "Contact", href: "/contact" },
+];
+
+const currentPath = Astro.url.pathname;
+
+function isActive(href: string): boolean {
+  return currentPath === href || currentPath.startsWith(href + "/");
+}
+
+const baseLinkClass = "inline-block text-[14px] font-semibold uppercase tracking-[0.18em] pb-1 border-b transition-colors duration-200 ease-[var(--ease-out-soft)]";
+---
+
+<header class="border-b border-line bg-background">
+  <div class="relative mx-[var(--divider-inset)] flex items-center justify-between gap-8 py-8">
+    <a href="/" class="font-serif text-2xl text-foreground tracking-tight whitespace-nowrap">
+      CMK <span class="text-muted">Image Korea</span>
+    </a>
+
+    <nav aria-label="Primary" class="hidden md:block absolute left-1/2 -translate-x-1/2">
+      <ul class="flex items-center gap-10">
+        {navItems.map((item) => {
+          const active = isActive(item.href);
+          const stateClass = active
+            ? "text-foreground border-foreground"
+            : "text-muted border-transparent hover:text-foreground hover:border-foreground";
+          return (
+            <li>
+              <a href={item.href} class={`${baseLinkClass} ${stateClass}`}>
+                {item.label}
+              </a>
+            </li>
+          );
+        })}
+      </ul>
+    </nav>
+
+    <button aria-label="Open menu" class="md:hidden text-xs uppercase tracking-[0.18em] text-foreground">
+      Menu
+    </button>
+  </div>
+</header>

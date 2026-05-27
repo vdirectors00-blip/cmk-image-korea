@@ -1,0 +1,14 @@
+packages:
+  - 'apps/*'
+
+allowBuilds:
+  sharp: true
+
+# 빌드 스크립트 실행 허용 (pnpm 11+ 보안 옵트인)
+#  - esbuild : Astro/Vite/Sanity 번들러 (필수)
+#  - sharp   : Astro 기본 이미지 최적화
+#  - workerd : Cloudflare Workers 런타임 (wrangler dev 에 필수)
+onlyBuiltDependencies:
+  - esbuild
+  - sharp
+  - workerd

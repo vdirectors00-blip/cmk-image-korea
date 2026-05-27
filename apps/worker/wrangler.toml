@@ -1,0 +1,27 @@
+name = "cmkimage-api"
+main = "src/index.ts"
+compatibility_date = "2025-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+# CORS_ORIGIN — 쉼표 분리 화이트리스트. Origin 헤더가 일치하는 값을 응답에 반환.
+# 개발 + staging + 운영 모두 동시 지원. "*" 단일 entry 도 가능 (권장 X).
+[vars]
+CORS_ORIGIN = "http://localhost:4321"
+# 예시:
+# CORS_ORIGIN = "http://localhost:4321,https://cmk-staging.pages.dev,https://cmkimage.co.kr"
+
+# KV namespace for rate limiting
+# 1회 생성: pnpm --filter worker exec wrangler kv namespace create RATE_LIMIT_KV
+# 출력된 id 를 아래에 붙여넣기 (현재는 placeholder)
+[[kv_namespaces]]
+binding = "RATE_LIMIT_KV"
+id = "f78d1fbdddf34f8ea08fcfa1aef1432e"
+
+# Secrets — `pnpm --filter worker exec wrangler secret put <NAME>` 로 등록
+# SANITY_PROJECT_ID
+# SANITY_DATASET
+# SANITY_TOKEN          ← Sanity Editor 토큰 (write 권한)
+# RESEND_API_KEY        ← Resend 가입 후 발급
+# RESEND_FROM           ← "CMK 홈페이지 <noreply@vdirectors.com>" (개발용)
+# NOTIFY_EMAIL          ← 운영진 수신 이메일
+# TURNSTILE_SECRET      ← Cloudflare Turnstile secret key

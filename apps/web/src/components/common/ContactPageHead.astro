@@ -1,0 +1,24 @@
+---
+// Contact 전용 PageHead — 3개 폼 탭
+import PageHead from "@/components/common/PageHead.astro";
+
+interface Props {
+  active?: "personal" | "corporate" | "academy";
+}
+
+const { active = "corporate" } = Astro.props;
+
+const FORMS = [
+  { slug: "personal", label: "Personal" },
+  { slug: "corporate", label: "Corporate" },
+  { slug: "academy", label: "Academy" },
+] as const;
+
+const navItems = FORMS.map((f) => ({
+  label: f.label,
+  href: `/contact?form=${f.slug}`,
+  active: f.slug === active,
+}));
+---
+
+<PageHead title="Contact" navItems={navItems} filterKey="form" />

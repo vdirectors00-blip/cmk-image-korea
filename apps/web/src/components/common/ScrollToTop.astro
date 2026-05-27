@@ -1,0 +1,46 @@
+---
+// 매거진 톤 scroll-to-top 버튼
+// fixed bottom-right, 400px 스크롤 후 페이드인
+---
+
+<button
+  id="scroll-top"
+  type="button"
+  aria-label="맨 위로"
+  data-visible="false"
+  class:list={[
+    "fixed bottom-8 right-8 z-50",
+    "flex items-center gap-1.5",
+    "border border-foreground bg-background px-4 py-3",
+    "text-[10px] font-semibold uppercase tracking-[0.18em] text-foreground",
+    "opacity-0 pointer-events-none",
+    "transition-[opacity,transform,background-color,color] duration-300 ease-[var(--ease-out-soft)]",
+    "data-[visible=true]:opacity-100 data-[visible=true]:pointer-events-auto",
+    "hover:-translate-y-[2px] hover:bg-foreground hover:text-on-dark",
+  ]}
+>
+  Top
+  <span class="text-sm leading-none">↑</span>
+</button>
+
+<script is:inline>
+  (function () {
+    const btn = document.getElementById("scroll-top");
+    if (!btn) return;
+    const THRESHOLD = 400;
+    let visible = false;
+
+    function update() {
+      const shouldShow = window.scrollY > THRESHOLD;
+      if (shouldShow === visible) return;
+      visible = shouldShow;
+      btn.dataset.visible = String(shouldShow);
+    }
+
+    window.addEventListener("scroll", update, { passive: true });
+    btn.addEventListener("click", () => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+    update();
+  })();
+</script>

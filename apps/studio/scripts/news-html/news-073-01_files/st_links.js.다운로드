@@ -1,0 +1,161 @@
+function st_page(num) {
+	switch (num){
+		case 11: location.href = "/01intro/s_1.php"; break;
+		case 12: location.href = "/01intro/s_2.php"; break;
+		case 13: location.href = "/01intro/s_3.php"; break;
+		case 14: location.href = "/01intro/s_4.php"; break;
+		case 15: location.href = "/01intro/s_5.php"; break;
+		case 16: location.href = "/01intro/s_6.php"; break;
+
+		case 21: location.href = "/01laboratory/s_1.php"; break;
+		case 22: location.href = "/01laboratory/s_2.php"; break;
+		case 23: location.href = "/01laboratory/s_3.php"; break;
+
+		case 31: location.href = "/01enterprise/s_1.php"; break;
+		case 32: location.href = "/01enterprise/s_2.php"; break;
+		case 33: location.href = "/01enterprise/s_3.php"; break;
+
+		case 41: location.href = "/01apparatus/s_1.php"; break;
+		case 42: location.href = "/01apparatus/s_2.php"; break;
+		case 43: location.href = "/01apparatus/s_3.php"; break;
+
+		case 51: location.href = "/01vvip/s_1.php"; break;
+		case 52: location.href = "/01vvip/s_2.php"; break;
+		case 53: location.href = "/01vvip/s_3.php"; break;
+
+		case 61: location.href = "/01media/s_1.php"; break;
+		case 62: location.href = "/01media/s_2.php"; break;
+		case 63: location.href = "/01media/s_3.php"; break;
+
+		case 71: location.href = "/01person/s_1.php"; break;
+		case 72: location.href = "/01person/s_2.php"; break;
+		case 73: location.href = "/01person/s_3.php"; break;
+
+		case 81: location.href = "/01academy/s_1.php"; break;
+		case 82: location.href = "/01academy/s_2.php"; break;
+		case 83: location.href = "/01academy/s_3.php"; break;
+		case 84: location.href = "/01academy/s_4.php"; break;
+
+		case 91: location.href = "/01community/s_1.php"; break;
+		case 92: location.href = "/01community/s_2.php"; break;
+		case 93: location.href = "/01community/s_3.php"; break;
+
+		default : alert("준비중입니다"); break;
+	}
+}
+
+////* 멤버페이지 ////////*/
+//메인가기
+function goHOME() { location.href = "/index.php"; }
+function goCHI() { location.href = "http://china.cmkimage.co.kr/"; }
+
+//즐겨찾기
+function book_mark() {
+	alert("준비중입니다.");
+	/*
+	var sidebarurl = "http://www.cmkimage.co.kr"; // Change as required
+	var sidebartitle = "CMK 이미지코리아"; // Change as required
+	var url = this.location;
+	var title = "CMK 이미지코리아";
+	if (window.sidebar && window.sidebar.addPanel){ // Firefox 
+		window.sidebar.addPanel(sidebartitle, sidebarurl,"");
+	} 
+	else if ( document.all ) { // IE Favorite
+		window.external.AddFavorite(url, title); 
+	}
+	else if (navigator.appName == 'Netscape' && navigator.userAgent.search('Trident') != -1) {
+		window.external.AddFavorite(url, title); 
+	}
+	else if (window.opera && window.print) {
+		var elem = document.createElement('a');
+		elem.setAttribute('href',sidebarurl);
+		elem.setAttribute('title',sidebartitle);
+		elem.setAttribute('rel','sidebar');
+		elem.click();
+	}
+	else if (window.chrome) {
+		alert("Ctrl+D키를 누르시면 즐겨찾기에 추가하실 수 있습니다.");
+	}
+	else{
+		alert("해당기기에서는 작동하지 않습니다.");
+	}	
+	*/
+}
+
+//로그아웃
+function logout() { location.href = "/logout.php"; }
+
+//로그인
+function login() { location.href = "/member/login.php?refurl="+encodeURIComponent(document.location.href); }
+
+//회원가입
+function join() { location.href = "/member/join.php"; }
+
+//마이페이지
+function mypage() { location.href = "/member/mypage.php"; }
+
+//회원정보수정
+function modify() { location.href = "/member/modify.php"; }
+
+//회원탈퇴
+function secede() { location.href = "/member/secede.php"; }
+
+//로그인 체크
+function login_chk() {
+	alert("개인정보보호차원에서 해당 컨텐츠는 의료법 제 56조 2항에 의거,\n\r로그인한 후 이용이 가능합니다.\n\r컨텐츠 이용을 위해 로그인을 하여 주십시오."); 
+	location.href = "/member/login.php?refurl="+encodeURIComponent(document.location.href); 
+}
+
+//개인보호정책
+function policy() { 
+url = "/member/policy.php" ;
+window.open(url,'','toolbar=no,menubar=no,location=no,directions=no, scrollbars=yes,status=yes,width=500,height=580'); 
+} 
+
+//이용약관
+function rule() {
+url = "/member/rule.php" ; 
+window.open(url,'','toolbar=no,menubar=no,location=no,directions=no, scrollbars=yes,status=yes,width=500,height=580'); 
+} 
+
+//이메일 무단수집거부
+function nospam() {
+url = "/member/nospam.php" ;
+window.open(url,'','toolbar=no,menubar=no,location=no,directions=no, scrollbars=yes,status=yes,width=340,height=265'); 
+}
+
+//게시물 링크
+function Go_url(url,action,sel_uid){
+	location.href=url+"?"+"action="+action+"&sel_uid="+sel_uid;
+}
+
+function id_Block(name){
+	$("#"+name).show();
+}
+function id_None(name){
+	$("#"+name).hide();
+}
+
+function getCookie( name ) { 
+	var nameOfCookie = name + "="; 
+	var x = 0; 
+	while ( x <= document.cookie.length ) { 
+		var y = (x+nameOfCookie.length); 
+		if ( document.cookie.substring( x, y ) == nameOfCookie ) { 
+			if ( (endOfCookie=document.cookie.indexOf( ";", y )) == -1 ) 
+				endOfCookie = document.cookie.length; 
+			return unescape( document.cookie.substring( y, endOfCookie ) ); 
+		} 
+		x = document.cookie.indexOf( " ", x ) + 1; 
+		if ( x == 0 ) 
+		break; 
+	} 
+	return ""; 
+}
+function setCookie( name, value, expiredays ) 
+{ 
+	var todayDate = new Date(); 
+	todayDate.setDate( todayDate.getDate() + expiredays ); 
+	document.cookie = name + "=" + escape( value ) + "; path=/; expires=" + todayDate.toGMTString() + ";" 
+} 
+

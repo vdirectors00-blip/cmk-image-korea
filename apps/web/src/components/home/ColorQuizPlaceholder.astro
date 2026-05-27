@@ -1,0 +1,24 @@
+---
+// Phase 4에서 React island로 실제 퀴즈 구현 (§8).
+// Phase 3에서는 자리만 잡고 CTA 버튼만 노출.
+import Button from "@/components/common/Button.astro";
+---
+
+<section class="bg-background">
+  <div class="mx-[var(--divider-inset)] border-t border-foreground"></div>
+  <div class="mx-auto max-w-[var(--container-max-wide)] px-[var(--container-padding)] py-32 text-center">
+    <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">
+      Interactive
+    </p>
+    <h2 class="mt-4 font-serif text-[clamp(36px,5vw,72px)] leading-[1.1] tracking-[-0.01em] text-foreground">
+      5초 퍼스널컬러 진단
+    </h2>
+    <p class="mt-4 text-base text-muted">당신의 컬러를 1분 안에</p>
+    <div class="mt-10 inline-block">
+      <Button variant="primary" href="/color-quiz">시작하기 →</Button>
+    </div>
+    <p class="mt-6 text-[10px] uppercase tracking-[0.18em] text-faint">
+      Phase 4 · 실제 퀴즈 구현 예정
+    </p>
+  </div>
+</section>

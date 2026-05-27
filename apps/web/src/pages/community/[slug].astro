@@ -1,0 +1,109 @@
+---
+// /community/[slug] — Post 상세 (v1.3.16)
+// 강의·미디어: 상단 <video controls> embed. 뉴스: cover image 또는 본문 텍스트.
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import CommunityPageHead from "@/components/community/CommunityPageHead.astro";
+import ScrollToTop from "@/components/common/ScrollToTop.astro";
+import { urlFor } from "@/lib/image";
+import { sanityClient } from "@/lib/sanity";
+import { postBySlugQuery, postSlugsQuery } from "@/lib/queries";
+import { pickLocale } from "@/types/sanity";
+import type { Post } from "@/types/sanity";
+
+export async function getStaticPaths() {
+  const slugs = await sanityClient.fetch<string[]>(postSlugsQuery);
+  return slugs.map((slug) => ({ params: { slug } }));
+}
+
+const { slug } = Astro.params;
+const post = await sanityClient.fetch<Post | null>(postBySlugQuery, { slug });
+
+if (!post) {
+  return Astro.redirect("/community");
+}
+
+const isMedia = post.category === "강의·미디어";
+const hasVideo = !!post.videoUrl;
+
+const formatDate = (iso?: string) =>
+  iso ? new Date(iso).toLocaleDateString("ko-KR", { year: "numeric", month: "long", day: "numeric" }) : "";
+---
+
+<BaseLayout
+  title={`${pickLocale(post.title)} — Community · CMK Image Korea`}
+  description={pickLocale(post.excerpt)}
+>
+  <CommunityPageHead active={post.category} />
+
+  <article class="bg-background">
+    <div class="mx-auto max-w-[var(--container-max)] px-[var(--container-padding)] pt-24">
+      <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">
+        {post.category} · {formatDate(post.publishedAt)}
+      </p>
+      <h2 class="mt-4 font-serif text-[clamp(32px,4vw,56px)] leading-[1.15] tracking-[-0.02em] text-foreground break-keep">
+        {pickLocale(post.title)}
+      </h2>
+    </div>
+
+    {hasVideo ? (
+      <div class="mx-auto mt-12 max-w-[var(--container-max)] px-[var(--container-padding)]">
+        <div class="aspect-video w-full overflow-hidden bg-black">
+          <video
+            controls
+            preload="metadata"
+            src={post.videoUrl}
+            class="h-full w-full"
+            playsinline
+          />
+        </div>
+      </div>
+    ) : post.coverImage && (
+      <div class="mx-auto mt-12 max-w-[var(--container-max)] px-[var(--container-padding)]">
+        <img
+          src={urlFor(post.coverImage).width(1600).height(900).fit("crop").url()}
+          alt=""
+          class="aspect-[16/9] w-full object-cover"
+          loading="eager"
+        />
+      </div>
+    )}
+
+    {/* 뉴스 본문 이미지 다중 — v1.3.16 패턴 (정적 host). 매거진 본문 width (max-w-3xl ≈ 768px) */}
+    {post.bodyImages && post.bodyImages.length > 0 && (
+      <div class="mx-auto mt-12 max-w-3xl px-[var(--container-padding)] space-y-8">
+        {post.bodyImages.map((src) => (
+          <img
+            src={src}
+            alt=""
+            class="w-full object-contain"
+            loading="lazy"
+          />
+        ))}
+      </div>
+    )}
+
+    {/* 뉴스 본문 HTML — v1.3.16 패턴 (cmk 기존 사이트 캡처). iframe = 16:9 영상 embed */}
+    {post.htmlBody && (
+      <div
+        class="prose-news mx-auto mt-12 max-w-[var(--container-max)] px-[var(--container-padding)] text-base leading-[1.85] text-soft break-keep [&_img]:my-6 [&_img]:max-w-full [&_a]:text-foreground [&_a]:underline-offset-4 [&_a:hover]:underline [&_p]:my-4 [&_iframe]:aspect-video [&_iframe]:w-full [&_iframe]:my-8 [&_iframe]:border-0"
+        set:html={post.htmlBody}
+      />
+    )}
+
+    <div class="mx-auto max-w-[var(--container-max)] px-[var(--container-padding)] py-16">
+      {post.excerpt?.ko && (
+        <p class="text-lg leading-[1.8] text-soft break-keep">
+          {pickLocale(post.excerpt)}
+        </p>
+      )}
+
+      <div class="mt-16 border-t border-foreground pt-6">
+        <a href="/community" class="text-sm text-muted hover:text-foreground">
+          ← Community 목록으로
+        </a>
+      </div>
+    </div>
+  </article>
+
+  <ScrollToTop />
+</BaseLayout>

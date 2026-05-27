@@ -1,0 +1,22 @@
+---
+// ABOUT 카테고리 전용 페이지 헤드 — active 항목만 받음.
+import PageHead from "@/components/common/PageHead.astro";
+
+interface Props {
+  active: "all" | "philosophy" | "ceo" | "history" | "people";
+}
+
+const { active } = Astro.props;
+
+const navItems = [
+  { label: "Philosophy", href: "/about/philosophy", active: active === "philosophy" },
+  { label: "CEO", href: "/about/ceo", active: active === "ceo" },
+  { label: "History", href: "/about/history", active: active === "history" },
+  { label: "People", href: "/about/people", active: active === "people" },
+];
+---
+
+<PageHead
+  title="About"
+  navItems={navItems}
+/>

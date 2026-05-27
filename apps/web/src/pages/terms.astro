@@ -1,0 +1,68 @@
+---
+// /terms — 이용약관. Sanity page (slug: "terms") 에서 본문 조회.
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import PageHead from "@/components/common/PageHead.astro";
+import PortableText from "@/components/common/PortableText.astro";
+import ScrollToTop from "@/components/common/ScrollToTop.astro";
+import { sanityClient } from "@/lib/sanity";
+import { pageBySlugQuery } from "@/lib/queries";
+import type { Page } from "@/types/sanity";
+
+const page = await sanityClient.fetch<Page | null>(pageBySlugQuery, { slug: "terms" });
+
+// date-only 문자열("2026-06-01")은 UTC 자정으로 파싱되므로 split 방식으로 TZ 무관하게 처리
+const formatDate = (iso?: string): string | null => {
+  if (!iso) return null;
+  const [y, m, d] = iso.split("-").map(Number);
+  return new Date(y, m - 1, d).toLocaleDateString("ko-KR", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+};
+
+const effectiveLabel = formatDate(page?.effectiveDate);
+---
+
+<BaseLayout
+  title="이용약관 — CMK Image Korea"
+  description="CMK 이미지코리아 서비스 이용약관"
+>
+  <PageHead title="terms" />
+
+  <section class="bg-background">
+    <div class="mx-auto max-w-[var(--container-max)] px-[var(--container-padding)] py-24">
+      <div class="mx-auto max-w-2xl">
+
+        {/* 메타 — 시행일 · 버전 */}
+        {(effectiveLabel || page?.version) && (
+          <p class="mb-10 text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">
+            {effectiveLabel && <span>시행일 {effectiveLabel}</span>}
+            {effectiveLabel && page?.version && <span class="mx-2 text-faint">·</span>}
+            {page?.version && <span>Ver. {page.version}</span>}
+          </p>
+        )}
+
+        {/* 본문 */}
+        {page?.body?.ko ? (
+          <PortableText blocks={page.body.ko} />
+        ) : (
+          <div class="space-y-4 text-sm text-muted">
+            <p class="font-semibold text-foreground">준비 중입니다.</p>
+            <p>
+              이용약관은 클라이언트 법무 검토 후 등록될 예정입니다.<br />
+              문의: <a href="mailto:info@cmkimage.co.kr" class="underline underline-offset-4 hover:text-accent">info@cmkimage.co.kr</a>
+            </p>
+          </div>
+        )}
+
+        {/* 뒤로 */}
+        <div class="mt-20 border-t border-foreground pt-8">
+          <a href="/" class="text-sm text-muted hover:text-foreground">← 홈으로</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <ScrollToTop />
+</BaseLayout>
