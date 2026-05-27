@@ -1,0 +1,47 @@
+---
+// /about/clients 전용 — cap 없이 전체 96개 노출. 정적 데이터 사용.
+import { CLIENT_LOGO_GROUPS, getLogoPath } from "@/lib/client-logos";
+
+const groups = CLIENT_LOGO_GROUPS.filter((g) => g.items.length > 0);
+
+const allUnmapped = groups.flatMap((g) => g.unmapped ?? []).sort((a, b) => a.localeCompare(b, "ko"));
+---
+
+<section class="bg-background">
+  <div class="mx-auto max-w-[var(--container-max)] px-[var(--container-padding)] pb-24">
+
+    <div class="space-y-16">
+      {groups.map((group) => (
+        <div>
+          <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">
+            {group.label}
+          </p>
+          <div class="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+            {group.items.map((item) => (
+              <div class="flex aspect-[16/7] items-center justify-center border border-line bg-white px-4 py-3 transition-colors duration-200 hover:border-foreground">
+                <img
+                  src={getLogoPath(group, item)}
+                  alt={item.name}
+                  class="max-h-full max-w-full object-contain"
+                  loading="lazy"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+
+    {allUnmapped.length > 0 && (
+      <div class="mt-20 border-t border-line pt-12">
+        <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted text-center">
+          그 외 함께해 온 기업·기관
+        </p>
+        <p class="mt-6 mx-auto max-w-[920px] text-center font-serif italic leading-[1.9] text-foreground break-keep" style="font-size: clamp(15px, 1.4vw, 19px);">
+          {allUnmapped.join(" · ")}
+        </p>
+      </div>
+    )}
+
+  </div>
+</section>

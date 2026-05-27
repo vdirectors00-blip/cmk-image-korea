@@ -8,8 +8,7 @@ interface Props {
 
 const { image } = Astro.props;
 
-// ⚠️ §13.3 #1 — 설립 연도 placeholder
-const SINCE = "[YEAR]";
+const SINCE = "2008";
 ---
 
 <section class="relative h-[calc(100svh-var(--header-height))] w-full overflow-hidden bg-dark">
@@ -28,7 +27,7 @@ const SINCE = "[YEAR]";
   ) : (
     <>
       <img
-        src="/images/hero/hero.jpg"
+        src="/images/hero/hero.png"
         alt=""
         class="absolute inset-0 h-full w-full object-cover"
         loading="eager"

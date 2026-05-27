@@ -12,16 +12,14 @@ import ScrollToTop from "@/components/common/ScrollToTop.astro";
 import { sanityClient } from "@/lib/sanity";
 import {
   servicesAllQuery,
-  clientLogosQuery,
   statsQuery,
   ceoQuery,
 } from "@/lib/queries";
-import type { Service, ClientLogo, Stat, Person } from "@/types/sanity";
+import type { Service, Stat, Person } from "@/types/sanity";
 
 // 병렬 fetch (Sanity public dataset — token 불필요)
-const [services, logos, stats, ceo] = await Promise.all([
+const [services, stats, ceo] = await Promise.all([
   sanityClient.fetch<Service[]>(servicesAllQuery),
-  sanityClient.fetch<ClientLogo[]>(clientLogosQuery),
   sanityClient.fetch<Stat[]>(statsQuery),
   sanityClient.fetch<Person | null>(ceoQuery),
 ]);
@@ -34,7 +32,7 @@ const [services, logos, stats, ceo] = await Promise.all([
   <Hero />
   <ColorQuizSection />
   <ServiceCards services={services} />
-  <LogoWall logos={logos} />
+  <LogoWall />
   <Stats stats={stats} />
   <CeoIntro ceo={ceo} />
   <ContactCta />

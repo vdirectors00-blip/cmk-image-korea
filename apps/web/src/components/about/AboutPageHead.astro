@@ -3,7 +3,7 @@
 import PageHead from "@/components/common/PageHead.astro";
 
 interface Props {
-  active: "all" | "philosophy" | "ceo" | "history" | "people";
+  active: "all" | "philosophy" | "ceo" | "history" | "people" | "clients";
 }
 
 const { active } = Astro.props;
@@ -13,6 +13,7 @@ const navItems = [
   { label: "CEO", href: "/about/ceo", active: active === "ceo" },
   { label: "History", href: "/about/history", active: active === "history" },
   { label: "People", href: "/about/people", active: active === "people" },
+  { label: "Clients", href: "/about/clients", active: active === "clients" },
 ];
 ---
 

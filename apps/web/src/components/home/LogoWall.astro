@@ -1,136 +1,61 @@
 ---
-// §6.1 섹션 4 — HOME 클라이언트 로고월 (v1.3.16)
-// 4 카테고리 × 12 = 48 로고. 각 섹션 4-col × 3-row 박스 그리드.
-// 정적 로고 매핑 (CLIENT_LOGO_MAP) — name → /images/clients/{section}/{slug}.png.
-// 로고 image 없으면 박스 안에 이름 텍스트만 표시 (fallback).
-// §13.3 #8 — consentGiven=true 만 노출.
-import type { ClientLogo, ClientIndustry } from "@/types/sanity";
-
-interface Props {
-  logos: ClientLogo[];
-}
-
-const { logos } = Astro.props;
-
-const GROUPS: Array<{ label: string; matches: ClientIndustry[] }> = [
-  { label: "공공·관공서", matches: ["공공·관공서"] },
-  { label: "럭셔리·대기업", matches: ["글로벌", "대기업"] },
-  { label: "금융", matches: ["금융"] },
-  { label: "학교", matches: ["학교"] },
-];
+// HOME 클라이언트 로고월 — 카테고리당 8개 cap, 정적 데이터 (lib/client-logos.ts) 사용.
+import { CLIENT_LOGO_GROUPS, getLogoPath } from "@/lib/client-logos";
 
 const PER_SECTION = 8;
 
-// name → 정적 로고 경로. 4 섹션 × 8 = 32 로고 (v1.3.16).
-const CLIENT_LOGO_MAP: Record<string, string> = {
-  // 공공·관공서 (12 → 8 노출)
-  "검찰청": "/images/clients/public-affairs/prosecution.png",
-  "경찰청": "/images/clients/public-affairs/police.png",
-  "국가정보원": "/images/clients/public-affairs/nis.png",
-  "국무총리실": "/images/clients/public-affairs/pmo.png",
-  "국방부": "/images/clients/public-affairs/mnd.png",
-  "문화체육관광부": "/images/clients/public-affairs/mcst.png",
-  "법무부": "/images/clients/public-affairs/moj.png",
-  "산업통상자원부": "/images/clients/public-affairs/motie.png",
-  "여성가족부": "/images/clients/public-affairs/mogef.png",
-  "통계청": "/images/clients/public-affairs/kostat.png",
-  "한국여성정책연구원": "/images/clients/public-affairs/kwdi.png",
-  "합동참모본부": "/images/clients/public-affairs/jcs.png",
-
-  // 럭셔리·대기업
-  "Louis Vuitton": "/images/clients/luxury-corporate/lv.png",
-  "LVMH": "/images/clients/luxury-corporate/lvmh.png",
-  "Christian Dior": "/images/clients/luxury-corporate/dior.png",
-  "Gucci": "/images/clients/luxury-corporate/gucci.png",
-  "Guerlain": "/images/clients/luxury-corporate/guerlain.png",
-  "Marc Jacobs": "/images/clients/luxury-corporate/marc.png",
-  "삼성전자": "/images/clients/luxury-corporate/samsung.png",
-  "현대자동차": "/images/clients/luxury-corporate/hyundai.png",
-
-  // 금융
-  "삼성생명": "/images/clients/finance/samsung-life.png",
-  "신한생명": "/images/clients/finance/shinhan-life.png",
-  "하나은행": "/images/clients/finance/hana.png",
-  "KEB외환은행": "/images/clients/finance/keb.png",
-  "NH농협": "/images/clients/finance/nh.png",
-  "미래에셋": "/images/clients/finance/miraeasset.png",
-  "KDB생명": "/images/clients/finance/kdb.png",
-  "IBK기업은행": "/images/clients/finance/ibk.png",
-
-  // 학교
-  "고려대학교": "/images/clients/school/korea-u.png",
-  "연세대학교": "/images/clients/school/yonsei-u.png",
-  "이화여자대학교": "/images/clients/school/ewha.png",
-  "성균관대학교": "/images/clients/school/skku.png",
-  "중앙대학교": "/images/clients/school/cau.png",
-  "한양대학교": "/images/clients/school/hanyang.png",
-  "한국외국어대학교": "/images/clients/school/hufs.png",
-  "숙명여자대학교": "/images/clients/school/sookmyung.png",
-};
-
-// v1.3.16 — 감사원 잔재 차단 (client-bai 가 Sanity 에서 삭제 안 됐을 때 대비).
-const EXCLUDE_NAMES = new Set(["감사원"]);
-
-const grouped = GROUPS.map((g) => {
-  const matched = logos.filter(
-    (l) => l.industry && g.matches.includes(l.industry) && !EXCLUDE_NAMES.has(l.name),
-  );
-  return {
-    label: g.label,
-    logos: matched.slice(0, PER_SECTION),
-  };
-}).filter((g) => g.logos.length > 0);
+const grouped = CLIENT_LOGO_GROUPS.map((g) => ({
+  ...g,
+  items: g.items.slice(0, PER_SECTION),
+})).filter((g) => g.items.length > 0);
 ---
 
-{logos.length > 0 && (
-  <section class="bg-background">
-    <div class="mx-[var(--divider-inset)] border-t border-foreground"></div>
-    <div class="mx-auto max-w-[var(--container-max)] px-[var(--container-padding)] py-24">
+<section class="bg-background">
+  <div class="mx-[var(--divider-inset)] border-t border-foreground"></div>
+  <div class="mx-auto max-w-[var(--container-max)] px-[var(--container-padding)] py-24">
 
-      <div class="text-center">
-        <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">
-          Trusted by
-        </p>
-        <h2 class="mt-3 font-serif text-[clamp(28px,3.5vw,42px)] leading-[1.15] tracking-[-0.01em] text-foreground">
-          함께해 온 기업들
-        </h2>
-      </div>
+    <div class="text-center">
+      <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">
+        Trusted by
+      </p>
+      <h2 class="mt-3 font-serif text-[clamp(28px,3.5vw,42px)] leading-[1.15] tracking-[-0.01em] text-foreground">
+        함께해 온 기업들
+      </h2>
+    </div>
 
-      <div class="mt-16 space-y-14">
-        {grouped.map((group) => (
-          <div>
-            <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">
-              {group.label}
-            </p>
-            <div class="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
-              {group.logos.map((logo) => {
-                const logoPath = CLIENT_LOGO_MAP[logo.name];
-                return (
-                  <div class="flex aspect-[16/7] items-center justify-center border border-line bg-white px-4 py-3 transition-colors duration-200 hover:border-foreground">
-                    {logoPath ? (
-                      <img
-                        src={logoPath}
-                        alt={logo.name}
-                        class="max-h-full max-w-full object-contain"
-                        loading="lazy"
-                      />
-                    ) : (
-                      <p class="text-center text-[12px] leading-tight text-muted break-keep">
-                        {logo.name}
-                      </p>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
+    <div class="mt-16 space-y-14">
+      {grouped.map((group) => (
+        <div>
+          <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">
+            {group.label}
+          </p>
+          <div class="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
+            {group.items.map((item) => (
+              <div class="flex aspect-[16/7] items-center justify-center border border-line bg-white px-4 py-3 transition-colors duration-200 hover:border-foreground">
+                <img
+                  src={getLogoPath(group, item)}
+                  alt={item.name}
+                  class="max-h-full max-w-full object-contain"
+                  loading="lazy"
+                />
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
+        </div>
+      ))}
+    </div>
 
-      <p class="mt-14 text-center font-serif italic text-base text-muted break-keep">
+    <div class="mt-14 text-center">
+      <p class="font-serif italic text-base text-muted break-keep">
         — 그 외 100여 클라이언트와 함께해 왔습니다.
       </p>
-
+      <a
+        href="/about/clients"
+        class="mt-7 inline-block border-b border-foreground pb-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-foreground transition-colors duration-200 ease-[var(--ease-out-soft)] hover:border-accent hover:text-accent"
+      >
+        View All Clients →
+      </a>
     </div>
-  </section>
-)}
+
+  </div>
+</section>
