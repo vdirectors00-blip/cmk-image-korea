@@ -2,7 +2,9 @@ packages:
   - 'apps/*'
 
 allowBuilds:
+  esbuild: true
   sharp: true
+  workerd: true
 
 # 빌드 스크립트 실행 허용 (pnpm 11+ 보안 옵트인)
 #  - esbuild : Astro/Vite/Sanity 번들러 (필수)
