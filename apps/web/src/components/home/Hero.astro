@@ -36,10 +36,7 @@ const { image } = Astro.props;
 
   {/* 헤드라인 — 매거진 표지 톤: 가운데 상단, 굵은 산세리프 대문자, 두 줄 */}
   <div class="relative z-10 mx-auto flex h-full max-w-[var(--container-max-wide)] flex-col items-center justify-start px-[var(--container-padding)] pt-[clamp(16px,2.5vh,48px)] text-center">
-    <h1
-      class="font-display uppercase text-on-dark"
-      style="font-weight: 400; font-size: clamp(52px, 10.5vw, 184px); line-height: 1.02; letter-spacing: 0.01em; word-spacing: 0.3em;"
-    >
+    <h1 class="hero-headline font-display uppercase text-on-dark">
       CREATIVE PARTNER<br />
       CMK IMAGE KOREA
     </h1>
@@ -51,3 +48,18 @@ const { image } = Astro.props;
     <span class="mt-1 inline-block h-4 w-px bg-on-dark/50"></span>
   </div>
 </section>
+
+<style>
+  .hero-headline {
+    font-weight: 400;
+    font-size: clamp(40px, 10.5vw, 184px);
+    line-height: 1.02;
+    letter-spacing: 0.01em;
+    word-spacing: 0.12em;
+  }
+  @media (min-width: 768px) {
+    .hero-headline {
+      word-spacing: 0.3em;
+    }
+  }
+</style>

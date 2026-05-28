@@ -39,9 +39,6 @@ const gradient = `linear-gradient(135deg, ${meta.palette.map((c) => c.hex).join(
           >
             {meta.english.split(" ")[0]}
           </p>
-          <p class="absolute top-4 right-4 text-[10px] uppercase tracking-[0.2em] text-white/70">
-            Photo: Coming Soon
-          </p>
         </div>
 
         {/* 우 — 결과 카피 */}
@@ -66,7 +63,7 @@ const gradient = `linear-gradient(135deg, ${meta.palette.map((c) => c.hex).join(
 
   {/* §8.4.2 어울리는 팔레트 */}
   <section class="bg-background">
-    <div class="mx-auto max-w-[var(--container-max)] px-[var(--container-padding)] py-24">
+    <div class="mx-auto max-w-[var(--container-max)] px-[var(--container-padding)] py-14 md:py-24">
       <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">
         Palette
       </p>
@@ -89,7 +86,7 @@ const gradient = `linear-gradient(135deg, ${meta.palette.map((c) => c.hex).join(
   {/* §8.4 Next step — 카피 두 단락 + 두 버튼 동일 크기 (v1.3.15) */}
   <section class="bg-background">
     <div class="mx-[var(--divider-inset)] border-t border-foreground"></div>
-    <div class="mx-auto max-w-[var(--container-max-wide)] px-[var(--container-padding)] py-24 text-center">
+    <div class="mx-auto max-w-[var(--container-max-wide)] px-[var(--container-padding)] py-14 md:py-24 text-center">
       <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">
         Next step
       </p>

@@ -222,7 +222,7 @@ export default function InquiryForm({ kind, workerUrl, turnstileSiteKey, source:
                 rows={4}
                 value={values[f.name] ?? ""}
                 onChange={(e) => setField(f.name, e.target.value)}
-                className="mt-2 block w-full border border-line bg-background px-4 py-3 text-sm text-soft focus:border-foreground focus:outline-none"
+                className="mt-2 block w-full border border-line bg-background px-4 py-3 text-base md:text-sm text-soft focus:border-foreground focus:outline-none"
               />
             ) : f.type === "select" ? (
               <select
@@ -230,7 +230,7 @@ export default function InquiryForm({ kind, workerUrl, turnstileSiteKey, source:
                 required={f.required}
                 value={values[f.name] ?? ""}
                 onChange={(e) => setField(f.name, e.target.value)}
-                className="mt-2 block w-full border border-line bg-background px-4 py-3 text-sm text-soft focus:border-foreground focus:outline-none"
+                className="mt-2 block w-full border border-line bg-background px-4 py-3 text-base md:text-sm text-soft focus:border-foreground focus:outline-none"
               >
                 <option value="">선택</option>
                 {f.options?.map((o) => (
@@ -247,7 +247,7 @@ export default function InquiryForm({ kind, workerUrl, turnstileSiteKey, source:
                 placeholder={f.placeholder}
                 value={values[f.name] ?? ""}
                 onChange={(e) => setField(f.name, e.target.value)}
-                className="mt-2 block w-full border border-line bg-background px-4 py-3 text-sm text-soft focus:border-foreground focus:outline-none"
+                className="mt-2 block w-full border border-line bg-background px-4 py-3 text-base md:text-sm text-soft focus:border-foreground focus:outline-none"
               />
             )}
           </div>

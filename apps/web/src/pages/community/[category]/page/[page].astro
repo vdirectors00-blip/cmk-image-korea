@@ -59,7 +59,7 @@ const nextHref = currentPage < totalPages ? pageHref(currentPage + 1) : undefine
   <CommunityPageHead active={sanityCategory} />
 
   <section class="bg-background">
-    <div class="mx-auto max-w-[var(--container-max)] px-[var(--container-padding)] py-24">
+    <div class="mx-auto max-w-[var(--container-max)] px-[var(--container-padding)] py-14 md:py-24">
       <div class="grid grid-cols-1 items-start gap-12 md:grid-cols-2 md:gap-x-10 md:gap-y-20 lg:grid-cols-3">
         {posts.map((post) => <PostCard post={post} />)}
       </div>

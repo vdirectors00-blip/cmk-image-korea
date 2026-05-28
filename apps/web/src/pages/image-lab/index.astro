@@ -20,7 +20,7 @@ const articles = await sanityClient.fetch<LabArticle[]>(labArticlesAllQuery);
   <LabPageHead />
 
   <section class="bg-background">
-    <div class="mx-auto max-w-[var(--container-max)] px-[var(--container-padding)] py-24">
+    <div class="mx-auto max-w-[var(--container-max)] px-[var(--container-padding)] py-14 md:py-24">
       <LabAreasInteractive articles={articles} client:visible />
     </div>
   </section>

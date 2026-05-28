@@ -36,7 +36,7 @@ const formatDate = (iso?: string) =>
   <CommunityPageHead active={post.category} />
 
   <article class="bg-background">
-    <div class="mx-auto max-w-[var(--container-max)] px-[var(--container-padding)] pt-24">
+    <div class="mx-auto max-w-[var(--container-max)] px-[var(--container-padding)] pt-14 md:pt-24">
       <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">
         {post.category} · {formatDate(post.publishedAt)}
       </p>

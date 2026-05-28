@@ -13,6 +13,6 @@ export const sanityClient = createClient({
   projectId,
   dataset,
   apiVersion: "2024-01-01",
-  useCdn: true, // 빌드 타임 fetch이므로 CDN OK
+  useCdn: import.meta.env.PROD, // prod 빌드만 CDN. dev 는 fresh fetch (query 추가/변경 시 캐시 회피)
   // token: import.meta.env.SANITY_TOKEN, // public dataset은 토큰 불필요
 });

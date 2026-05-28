@@ -17,9 +17,9 @@ function isActive(href: string): boolean {
 const baseLinkClass = "inline-block text-[14px] font-semibold uppercase tracking-[0.18em] pb-1 border-b transition-colors duration-200 ease-[var(--ease-out-soft)]";
 ---
 
-<header class="border-b border-line bg-background">
-  <div class="relative mx-[var(--divider-inset)] flex items-center justify-between gap-8 py-8">
-    <a href="/" class="font-serif text-2xl text-foreground tracking-tight whitespace-nowrap">
+<header class="relative z-40 border-b border-line bg-background">
+  <div class="relative mx-[var(--divider-inset)] flex items-center justify-between gap-4 py-6 md:py-8">
+    <a href="/" class="font-serif text-xl md:text-2xl text-foreground tracking-tight whitespace-nowrap">
       CMK <span class="text-muted">Image Korea</span>
     </a>
 
@@ -41,8 +41,102 @@ const baseLinkClass = "inline-block text-[14px] font-semibold uppercase tracking
       </ul>
     </nav>
 
-    <button aria-label="Open menu" class="md:hidden text-xs uppercase tracking-[0.18em] text-foreground">
-      Menu
+    <button
+      type="button"
+      data-mobile-menu-open
+      aria-label="Open menu"
+      aria-expanded="false"
+      aria-controls="mobile-menu"
+      class="md:hidden flex flex-col items-end gap-[5px] p-2 -mr-2"
+    >
+      <span class="block h-[1.5px] w-6 bg-foreground"></span>
+      <span class="block h-[1.5px] w-5 bg-foreground"></span>
+      <span class="block h-[1.5px] w-6 bg-foreground"></span>
     </button>
   </div>
 </header>
+
+{/* 모바일 풀스크린 오버레이 — Staatliches uppercase 큰 메뉴 6개 */}
+<div
+  id="mobile-menu"
+  data-mobile-menu
+  aria-hidden="true"
+  class="fixed inset-0 z-50 md:hidden bg-background opacity-0 pointer-events-none transition-opacity duration-300 ease-[var(--ease-out-soft)]"
+>
+  <div class="flex h-full flex-col">
+    {/* 헤더 영역 — 로고 + 닫기 X */}
+    <div class="flex items-center justify-between border-b border-line px-[var(--divider-inset)] py-6">
+      <a href="/" class="font-serif text-xl text-foreground tracking-tight whitespace-nowrap">
+        CMK <span class="text-muted">Image Korea</span>
+      </a>
+      <button
+        type="button"
+        data-mobile-menu-close
+        aria-label="Close menu"
+        class="p-2 -mr-2 text-foreground"
+      >
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+          <line x1="5" y1="5" x2="19" y2="19" />
+          <line x1="19" y1="5" x2="5" y2="19" />
+        </svg>
+      </button>
+    </div>
+
+    {/* 메뉴 6개 — Staatliches condensed 매거진 톤 */}
+    <nav aria-label="Mobile primary" class="flex-1 overflow-y-auto px-[var(--divider-inset)] py-12">
+      <ul class="flex flex-col items-start gap-6">
+        {navItems.map((item) => {
+          const active = isActive(item.href);
+          return (
+            <li>
+              <a
+                href={item.href}
+                class={`font-display uppercase tracking-[0.02em] leading-[0.95] transition-colors duration-200 ${
+                  active ? "text-foreground" : "text-muted hover:text-foreground"
+                }`}
+                style="font-size: clamp(40px, 11vw, 64px);"
+              >
+                {item.label}
+              </a>
+            </li>
+          );
+        })}
+      </ul>
+    </nav>
+  </div>
+</div>
+
+<script is:inline>
+  (function () {
+    const openBtn = document.querySelector("[data-mobile-menu-open]");
+    const closeBtn = document.querySelector("[data-mobile-menu-close]");
+    const menu = document.querySelector("[data-mobile-menu]");
+    if (!openBtn || !closeBtn || !menu) return;
+
+    const links = menu.querySelectorAll("a[href]");
+
+    function open() {
+      menu.classList.remove("opacity-0", "pointer-events-none");
+      menu.classList.add("opacity-100");
+      menu.setAttribute("aria-hidden", "false");
+      openBtn.setAttribute("aria-expanded", "true");
+      document.body.style.overflow = "hidden";
+    }
+
+    function close() {
+      menu.classList.add("opacity-0", "pointer-events-none");
+      menu.classList.remove("opacity-100");
+      menu.setAttribute("aria-hidden", "true");
+      openBtn.setAttribute("aria-expanded", "false");
+      document.body.style.overflow = "";
+    }
+
+    openBtn.addEventListener("click", open);
+    closeBtn.addEventListener("click", close);
+    links.forEach((a) => a.addEventListener("click", close));
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && menu.getAttribute("aria-hidden") === "false") close();
+    });
+  })();
+</script>

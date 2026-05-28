@@ -22,9 +22,9 @@ const services = await sanityClient.fetch<Service[]>(servicesAllQuery);
   <ConsultingPageHead />
 
   <section class="bg-background">
-    <div class="mx-auto max-w-[var(--container-max)] px-[var(--container-padding)] py-24">
+    <div class="mx-auto max-w-[var(--container-max)] px-[var(--container-padding)] py-14 md:py-24">
       {services.length === 0 ? (
-        <p class="py-32 text-center text-sm text-faint">
+        <p class="py-16 md:py-32 text-center text-sm text-faint">
           [ 컨설팅 영역 데이터가 없습니다 · Sanity Studio 에서 추가 ]
         </p>
       ) : (

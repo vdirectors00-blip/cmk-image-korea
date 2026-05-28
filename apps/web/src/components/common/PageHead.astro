@@ -19,35 +19,29 @@ const { title, subtitle, navItems, filterKey } = Astro.props;
 ---
 
 <section class="bg-background">
-  <div class="mx-auto max-w-[var(--container-max-wide)] px-[var(--container-padding)] py-20 text-center">
+  <div class="page-head-wrap mx-auto max-w-[var(--container-max-wide)] px-[var(--container-padding)] text-center">
     {/* 큰 display 제목 — Staatliches condensed 매거진 표지 톤 */}
-    <h1
-      class="font-display uppercase leading-[0.95] tracking-[0.005em] text-foreground"
-      style="font-size: clamp(40px, 6.5vw, 104px);"
-    >
+    <h1 class="page-head-title font-display uppercase leading-[0.95] tracking-[0.005em] text-foreground">
       {title}
     </h1>
 
     {subtitle && (
-      <p class="mt-6 text-sm text-muted">{subtitle}</p>
+      <p class="mt-4 md:mt-6 text-sm text-muted">{subtitle}</p>
     )}
 
     {navItems && navItems.length > 0 && (
-      <nav aria-label="Sub categories" class="mt-12">
-        {/* gap utility 도 동일 사유로 inline 처리 */}
+      <nav aria-label="Sub categories" class="mt-8 md:mt-12">
         <ul
-          class="flex flex-wrap items-center justify-center"
-          style="row-gap: 0.75rem; column-gap: 3rem;"
+          class="page-head-nav flex flex-wrap items-center justify-center"
           data-filter-nav={filterKey}
         >
           {navItems.map((item) => {
-            const baseLink = "font-display uppercase tracking-[0.05em] transition-colors duration-200 ease-[var(--ease-out-soft)] text-muted hover:text-foreground";
+            const baseLink = "page-head-nav-link font-display uppercase tracking-[0.05em] transition-colors duration-200 ease-[var(--ease-out-soft)] text-muted hover:text-foreground";
             return (
               <li>
                 <a
                   href={item.href}
                   class={`${baseLink} ${item.active ? "is-active" : ""}`}
-                  style="font-size: clamp(18px, 1.9vw, 30px);"
                 >
                   {item.label}
                 </a>
@@ -59,3 +53,35 @@ const { title, subtitle, navItems, filterKey } = Astro.props;
     )}
   </div>
 </section>
+
+<style>
+  .page-head-wrap {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+  }
+  .page-head-title {
+    font-size: clamp(36px, 6.5vw, 104px);
+  }
+  .page-head-nav {
+    row-gap: 0.75rem;
+    column-gap: 1.5rem;
+  }
+  .page-head-nav-link {
+    font-size: clamp(15px, 1.9vw, 30px);
+  }
+  @media (min-width: 768px) {
+    .page-head-wrap {
+      padding-top: 5rem;
+      padding-bottom: 5rem;
+    }
+    .page-head-title {
+      font-size: clamp(40px, 6.5vw, 104px);
+    }
+    .page-head-nav {
+      column-gap: 3rem;
+    }
+    .page-head-nav-link {
+      font-size: clamp(18px, 1.9vw, 30px);
+    }
+  }
+</style>

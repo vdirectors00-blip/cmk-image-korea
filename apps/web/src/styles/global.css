@@ -42,9 +42,15 @@
   --container-max:      1280px;
   --container-max-wide: 1664px;                          /* 사진 풀폭 섹션용 (Color Quiz · Contact) — 기본 1280px의 1.3배 */
   --container-padding:  clamp(1.25rem, 4vw, 2.5rem);
-  --divider-inset:      clamp(60px, 8vw, 160px);         /* 섹션 사이 hairline 좌우 inset */
-  --header-height:      89px;                            /* Header py-8 + 로고 text-2xl 합산. Hero h-[calc(100svh - var(--header-height))] 에서 참조 */
+  --divider-inset:      clamp(20px, 6vw, 160px);         /* 섹션 사이 hairline 좌우 inset (모바일 20px, 데스크 160px) */
+  --header-height:      73px;                            /* 모바일 Header py-6 + 로고 text-xl. Hero h-[calc(100svh - var(--header-height))] 참조 */
   --ease-out-soft:      cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (min-width: 768px) {
+  :root {
+    --header-height: 89px;                              /* 데스크 Header py-8 + 로고 text-2xl */
+  }
 }
 
 /* ============================================================
