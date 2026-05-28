@@ -47,9 +47,9 @@
   --ease-out-soft:      cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1280px) {
   :root {
-    --header-height: 89px;                              /* 데스크 Header py-8 + 로고 text-2xl */
+    --header-height: 89px;                              /* 데스크 Header py-8 + 로고 text-2xl (xl 브레이크) */
   }
 }
 

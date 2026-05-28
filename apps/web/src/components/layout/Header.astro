@@ -18,12 +18,12 @@ const baseLinkClass = "inline-block text-[14px] font-semibold uppercase tracking
 ---
 
 <header class="relative z-40 border-b border-line bg-background">
-  <div class="relative mx-[var(--divider-inset)] flex items-center justify-between gap-4 py-6 md:py-8">
-    <a href="/" class="font-serif text-xl md:text-2xl text-foreground tracking-tight whitespace-nowrap">
+  <div class="relative mx-[var(--divider-inset)] flex items-center justify-between gap-4 py-6 xl:py-8">
+    <a href="/" class="font-serif text-xl xl:text-2xl text-foreground tracking-tight whitespace-nowrap">
       CMK <span class="text-muted">Image Korea</span>
     </a>
 
-    <nav aria-label="Primary" class="hidden md:block absolute left-1/2 -translate-x-1/2">
+    <nav aria-label="Primary" class="hidden xl:block absolute left-1/2 -translate-x-1/2">
       <ul class="flex items-center gap-10">
         {navItems.map((item) => {
           const active = isActive(item.href);
@@ -47,7 +47,7 @@ const baseLinkClass = "inline-block text-[14px] font-semibold uppercase tracking
       aria-label="Open menu"
       aria-expanded="false"
       aria-controls="mobile-menu"
-      class="md:hidden flex flex-col items-end gap-[5px] p-2 -mr-2"
+      class="xl:hidden flex flex-col items-end gap-[5px] p-2 -mr-2"
     >
       <span class="block h-[1.5px] w-6 bg-foreground"></span>
       <span class="block h-[1.5px] w-5 bg-foreground"></span>
@@ -61,7 +61,7 @@ const baseLinkClass = "inline-block text-[14px] font-semibold uppercase tracking
   id="mobile-menu"
   data-mobile-menu
   aria-hidden="true"
-  class="fixed inset-0 z-50 md:hidden bg-background opacity-0 pointer-events-none transition-opacity duration-300 ease-[var(--ease-out-soft)]"
+  class="fixed inset-0 z-50 xl:hidden bg-background opacity-0 pointer-events-none transition-opacity duration-300 ease-[var(--ease-out-soft)]"
 >
   <div class="flex h-full flex-col">
     {/* 헤더 영역 — 로고 + 닫기 X */}
