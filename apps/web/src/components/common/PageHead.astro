@@ -20,10 +20,10 @@ const { title, subtitle, navItems, filterKey } = Astro.props;
 
 <section class="bg-background">
   <div class="mx-auto max-w-[var(--container-max-wide)] px-[var(--container-padding)] py-20 text-center">
-    {/* 큰 italic 세리프 제목 — Tailwind arbitrary clamp 가 jit 에 안 잡혀서 inline style 로 강제 */}
+    {/* 큰 display 제목 — Staatliches condensed 매거진 표지 톤 */}
     <h1
-      class="font-serif italic lowercase leading-[0.9] tracking-[-0.03em] text-foreground"
-      style="font-size: clamp(30px, 5.5vw, 80px);"
+      class="font-display uppercase leading-[0.95] tracking-[0.005em] text-foreground"
+      style="font-size: clamp(40px, 6.5vw, 104px);"
     >
       {title}
     </h1>
@@ -41,13 +41,13 @@ const { title, subtitle, navItems, filterKey } = Astro.props;
           data-filter-nav={filterKey}
         >
           {navItems.map((item) => {
-            const baseLink = "font-serif italic tracking-tight transition-colors duration-200 ease-[var(--ease-out-soft)] text-muted hover:text-foreground";
+            const baseLink = "font-display uppercase tracking-[0.05em] transition-colors duration-200 ease-[var(--ease-out-soft)] text-muted hover:text-foreground";
             return (
               <li>
                 <a
                   href={item.href}
                   class={`${baseLink} ${item.active ? "is-active" : ""}`}
-                  style="font-size: clamp(16px, 1.9vw, 29px);"
+                  style="font-size: clamp(18px, 1.9vw, 30px);"
                 >
                   {item.label}
                 </a>

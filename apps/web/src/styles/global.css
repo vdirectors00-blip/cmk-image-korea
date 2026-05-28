@@ -30,8 +30,8 @@
 
   /* Typography */
   --font-sans:    "Pretendard Variable", Pretendard, system-ui, sans-serif;
-  --font-serif:   "Cormorant Garamond", "Noto Serif KR", Georgia, serif;
-  --font-display: "Staatliches", "Pretendard Variable", system-ui, sans-serif;
+  --font-serif:   "Pretendard Variable", Pretendard, system-ui, sans-serif;
+  --font-display: "Staatliches", "Do Hyeon", "Pretendard Variable", system-ui, sans-serif;
 }
 
 /* ============================================================
