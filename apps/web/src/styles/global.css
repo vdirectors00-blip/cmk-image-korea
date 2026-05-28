@@ -29,8 +29,9 @@
   --color-edge:        #ECE7DD;
 
   /* Typography */
-  --font-sans:  "Pretendard Variable", Pretendard, system-ui, sans-serif;
-  --font-serif: "Cormorant Garamond", "Noto Serif KR", Georgia, serif;
+  --font-sans:    "Pretendard Variable", Pretendard, system-ui, sans-serif;
+  --font-serif:   "Cormorant Garamond", "Noto Serif KR", Georgia, serif;
+  --font-display: "Staatliches", "Pretendard Variable", system-ui, sans-serif;
 }
 
 /* ============================================================

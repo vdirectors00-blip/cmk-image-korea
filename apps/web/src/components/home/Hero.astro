@@ -7,12 +7,9 @@ interface Props {
 }
 
 const { image } = Astro.props;
-
-const SINCE = "2008";
 ---
 
 <section class="relative h-[calc(100svh-var(--header-height))] w-full overflow-hidden bg-dark">
-  {/* v1.3.15 — Sanity image 있으면 우선, 없으면 fallback hero.jpg (사용자 제공). 그것도 없으면 다크 그라데이션. */}
   {image ? (
     <>
       <img
@@ -27,28 +24,25 @@ const SINCE = "2008";
   ) : (
     <>
       <img
-        src="/images/hero/hero.png"
+        src="/images/hero/hero.jpg"
         alt=""
         class="absolute inset-0 h-full w-full object-cover"
         loading="eager"
         decoding="async"
       />
-      <div class="absolute inset-0 bg-gradient-to-b from-black/20 via-black/30 to-black/55"></div>
+      <div class="absolute inset-0 bg-gradient-to-b from-black/15 via-black/20 to-black/40"></div>
     </>
   )}
 
-  {/* 오버레이 카피 — 좌하단 매거진 톤 (text-on-dark 통일) */}
-  <div class="relative z-10 mx-auto flex h-full max-w-[var(--container-max)] flex-col justify-end px-[var(--container-padding)] pb-24">
-    <h1 class="font-serif italic text-[clamp(48px,8vw,128px)] leading-[1.0] tracking-[-0.02em] text-on-dark">
-      What is seen is<br />
-      what is communicated.
+  {/* 헤드라인 — 매거진 표지 톤: 가운데 상단, 굵은 산세리프 대문자, 두 줄 */}
+  <div class="relative z-10 mx-auto flex h-full max-w-[var(--container-max-wide)] flex-col items-center justify-start px-[var(--container-padding)] pt-[clamp(16px,2.5vh,48px)] text-center">
+    <h1
+      class="font-display uppercase text-on-dark"
+      style="font-weight: 400; font-size: clamp(52px, 10.5vw, 184px); line-height: 1.02; letter-spacing: 0.01em; word-spacing: 0.3em;"
+    >
+      CREATIVE PARTNER<br />
+      CMK IMAGE KOREA
     </h1>
-    <p class="mt-8 font-sans text-[clamp(20px,2.6vw,32px)] leading-[1.4] text-on-dark/90">
-      보이는 것이, 전해지는 것입니다.
-    </p>
-    <p class="mt-10 text-[11px] font-semibold uppercase tracking-[0.18em] text-on-dark/70">
-      CMK IMAGE KOREA &nbsp;·&nbsp; Since {SINCE}
-    </p>
   </div>
 
   {/* Scroll indicator */}
